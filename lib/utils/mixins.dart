@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/my_dialog.dart';
 import 'package:wajanja/presentation/widgets/spaced_column.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
-
 
 mixin AuthMixin {
   void googleSignIn() {
@@ -23,30 +23,29 @@ mixin UiInfoMixin {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void showErrorDialog(BuildContext context, {required AppError error}) {
-    showDialog(
+  void launch(BuildContext context,
+      {required Uri uri, String? errorMessage}) async {
+    if (await canLaunchUrl(uri)) {
+      launchUrl(uri);
+    } else {
+      if (!context.mounted) return;
+      showSnackMessage(
+        context,
+        "We could not open that url",
+        error: true,
+      );
+    }
+  }
+
+  Future<void> showErrorDialog(BuildContext context,
+      {required AppError error, List<Widget>? actions}) async {
+    return showDialog(
       context: context,
-      builder:
-          (context) => MyDialog(
-            title: error.title,
-            content: error.content,
-            actions:
-                error.content.contains('location')
-                    ? [
-                      // MyElevatedButton(
-                      //   text: "Open settings",
-                      //   borderRadius:
-                      //       Platform.isIOS ? BorderRadius.circular(0) : null,
-                      //   fontWeight: FontWeight.bold,
-                      //   onPressed: () {
-                      //     AppSettings.openAppSettings(
-                      //       type: AppSettingsType.location,
-                      //     );
-                      //   },
-                      // ),
-                    ]
-                    : null,
-          ),
+      builder: (context) => MyDialog(
+        title: error.title,
+        content: error.content,
+        actions: actions,
+      ),
     );
   }
 
@@ -58,7 +57,7 @@ mixin UiInfoMixin {
   }) {
     // final canShowSection = TutorialsDb.instance.showSection(section);
 
-    // log.i("SHOW CASE: $canShowSection");
+    // log.d("SHOW CASE: $canShowSection");
 
     // if (!canShowSection) return;
 
@@ -103,7 +102,7 @@ mixin UiInfoMixin {
         },
       ).show(context: context);
     } catch (e) {
-      log.i("ERROR SHOWING TUTORIAL IS: $e");
+      log.d("ERROR SHOWING TUTORIAL IS: $e");
     }
   }
 
@@ -213,12 +212,11 @@ mixin UiInfoMixin {
     return showDialog(
       barrierDismissible: barrierDismissible,
       context: context,
-      builder:
-          (context) => const Center(
-            child: CircularProgressIndicator.adaptive(
-              strokeCap: StrokeCap.round,
-            ),
-          ),
+      builder: (context) => const Center(
+        child: CircularProgressIndicator.adaptive(
+          strokeCap: StrokeCap.round,
+        ),
+      ),
     );
     // const MyLoadingWidget(color: Colors.white, size: 40));
   }
@@ -272,14 +270,13 @@ mixin UiInfoMixin {
       animationDuration: const Duration(milliseconds: 800),
       borderRadius: BorderRadius.circular(16),
       margin: const EdgeInsets.only(left: 16, right: 16, bottom: 24, top: 24),
-      backgroundColor:
-          Color.lerp(
-            Colors.white,
-            (error
-                ? Theme.of(context).colorScheme.error
-                : backgroundColor ?? Theme.of(context).colorScheme.primary),
-            0.8,
-          )!,
+      backgroundColor: Color.lerp(
+        Colors.white,
+        (error
+            ? Theme.of(context).colorScheme.error
+            : backgroundColor ?? Theme.of(context).colorScheme.primary),
+        0.8,
+      )!,
     ).show(context);
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     //     behavior: SnackBarBehavior.floating,

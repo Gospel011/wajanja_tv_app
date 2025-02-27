@@ -3,7 +3,7 @@ import 'package:wajanja/utils/constants/app_constants.dart';
 
 ///? Confirms if the email is valid
 String? emailValidator(value) {
-  // log.i("Validating Email $value");
+  // log.d("Validating Email $value");
   if (EmailValidator.validate(value.trim().toString())) {
     return null;
   } else {
@@ -21,7 +21,7 @@ String? handleValidator(value) {
 
 ///? confirms if the password is valid
 String? passwordValidator(value) {
-  // log.i("Validating password $value");
+  // log.d("Validating password $value");
   if (value.split('').length >= AppConstants.passwordLowerLimit) {
     return null;
   } else {
@@ -34,7 +34,7 @@ String? passwordValidator(value) {
 String? signupConfirmPasswordValidator(value, passwordValue) {
   //TODO
 
-  // log.i("Value = $value Password value = $passwordValue");
+  // log.d("Value = $value Password value = $passwordValue");
   if (value == '') {
     return "Please confirm your password";
   } else if (value != passwordValue) {

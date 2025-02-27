@@ -3,6 +3,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 
+enum AuthStates {
+  initial,
+
+  signingUp,
+  signedUp,
+  signingUpFailed,
+
+  loggingIn,
+  loggedIn,
+  loggingInFailed,
+  checkingEmailVerificationStatus,
+  checkingEmailVerificationStatusFailed,
+  checkingEmailVerificationStatusSuccessful,
+  sendingEmailVerificationFailed,
+  sendingEmailVerification,
+  emailVerificationSent,
+  signingOut,
+  signingOutFailed,
+}
+
 enum OnboardingIllustrations {
   video_light(
     path: 'assets/illustrations/video_light.svg',
@@ -102,3 +122,98 @@ enum AppRoutes {
 enum TextFieldType { otp, normal }
 
 enum TutorialSections { home }
+
+enum FirebaseAuthExceptions {
+  emailAlreadyInUse(
+    "This email is already associated with an account, please login instead.",
+  ),
+  invalidEmail(
+    "This email is invalid, please provide another email",
+  ),
+  operationNotAllowed(
+    "Auth provider not enabled, please try again later or contact support.",
+  ),
+  weakPassword(
+    "Your password is too weak, please provide a more secure one",
+  ),
+  tooManyRequests(
+    "You have made too many requests within a short time, please try again after some minutes.",
+  ),
+  userTokenExpired(
+    "Please re-login to continue",
+  ),
+  networkRequestFailed(
+    "Please check your internet connection",
+  ),
+  userDisabled(
+    "Your account has been disabled, please contact support.",
+  ),
+  userNotFound(
+    "This user does not exist, please create an account instead.",
+  ),
+  wrongPassword(
+    "Your password is incorrect.",
+  ),
+  invalidLoginCredential(
+    "Your email or password is incorrect",
+  ),
+  unknownError(
+    "We could not complete your request at the moment, please try again later",
+  );
+
+  String get describe => name.kebabCase.capitalize.replaceAll('-', ' ');
+
+  final String message;
+
+  const FirebaseAuthExceptions(this.message);
+
+  factory FirebaseAuthExceptions.fromCode(String value) {
+    switch (value) {
+      case 'email-already-in-use':
+        return FirebaseAuthExceptions.emailAlreadyInUse;
+      case 'invalid-email':
+        return FirebaseAuthExceptions.invalidEmail;
+      case 'operation-not-allowed':
+        return FirebaseAuthExceptions.operationNotAllowed;
+      case 'weak-password':
+        return FirebaseAuthExceptions.weakPassword;
+      case 'too-many-requests':
+        return FirebaseAuthExceptions.tooManyRequests;
+      case 'user-token-expired':
+        return FirebaseAuthExceptions.userTokenExpired;
+      case 'network-request-failed':
+        return FirebaseAuthExceptions.networkRequestFailed;
+      case 'user-disabled':
+        return FirebaseAuthExceptions.userDisabled;
+      case 'user-not-found':
+        return FirebaseAuthExceptions.userNotFound;
+      case 'wrong-password':
+        return FirebaseAuthExceptions.wrongPassword;
+      case 'invalid-credential':
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return FirebaseAuthExceptions.invalidLoginCredential;
+      default:
+        return FirebaseAuthExceptions.unknownError;
+    }
+  }
+
+/**
+ *
+user-disabled: *
+Thrown if the user corresponding to the given email has been disabled.
+user-not-found:
+Thrown if there is no user corresponding to the given email.
+wrong-password:
+Thrown if the password is invalid for the given email, or the account corresponding to the email does not have a password set.
+too-many-requests:
+Thrown if the user sent too many requests at the same time, for security the api will not allow too many attemps at the same time, user will have to wait for some time
+user-token-expired:
+Thrown if the user is no longer authenticated since his refresh token has been expired
+network-request-failed:
+Thrown if there was a network request error, for example the user don't don't have internet connection
+INVALID_LOGIN_CREDENTIALS or invalid-credential:
+Thrown if the password is invalid for the given email, or the account corresponding to the email does not have a password set. depending on if you are using firebase emulator or not the code is different
+operation-not-allowed:
+Thrown if email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.
+ */
+}

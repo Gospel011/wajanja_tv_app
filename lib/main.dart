@@ -1,18 +1,37 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:wajanja/data_layer/db/user_db.dart';
+import 'package:wajanja/data_layer/models/user_model/user.dart';
+import 'package:wajanja/firebase_options.dart';
 import 'package:wajanja/presentation/pages/go_router_config.dart';
 import 'package:wajanja/utils/themes/themes.dart';
 
-void main() => runApp(ProviderScope(child: const MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(UserAdapter());
+
+  await UserDb.instance.init();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(ProviderScope(child: const MyApp()));
+}
+
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   static final routerConfig = AppRouterConfig();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ScreenUtilInit(
       designSize: Size(440, 956),
       minTextAdapt: true,
@@ -30,7 +49,7 @@ class MyApp extends StatelessWidget {
             themeMode: ThemeMode.system,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
-            routerConfig: routerConfig.router,
+            routerConfig: routerConfig.createRouter(ref),
           );
         },
       ),

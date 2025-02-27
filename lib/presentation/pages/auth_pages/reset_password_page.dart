@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -52,49 +50,44 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
             Form(
               key: formKey,
-              child:
-                  Column(
-                    spacing: 20.h,
-                    children: [
-                      MyTextFormField(
-                        controller: password,
-                        sectionText: "Password",
-                        validator: passwordValidator,
-                        hintText: 'Password',
-                        obscureText: obscureText,
-                        suffixIcon: Icon(
-                          obscureText
-                              ? Icons.visibility_off_rounded
-                              : Icons.visibility_rounded,
-                        ),
-                        suffixOnpressed:
-                            () => setState(() {
-                              obscureText = !obscureText;
-                            }),
-                      ),
-
-                      MyTextFormField(
-                        sectionText: "Confirm password",
-                        controller: confirmPassword,
-                        hintText: "Confirm new password",
-                        obscureText: obscureText,
-                        suffixIcon: Icon(
-                          obscureText
-                              ? Icons.visibility_off_rounded
-                              : Icons.visibility_rounded,
-                        ),
-                        suffixOnpressed:
-                            () => setState(() {
-                              obscureText = !obscureText;
-                            }),
-                        validator:
-                            (value) => signupConfirmPasswordValidator(
-                              value,
-                              password.text,
-                            ),
-                      ),
-                    ],
-                  ).pSymmetric(),
+              child: Column(
+                spacing: 20.h,
+                children: [
+                  MyTextFormField(
+                    controller: password,
+                    sectionText: "Password",
+                    validator: passwordValidator,
+                    hintText: 'Password',
+                    obscureText: obscureText,
+                    suffixIcon: Icon(
+                      obscureText
+                          ? Icons.visibility_off_rounded
+                          : Icons.visibility_rounded,
+                    ),
+                    suffixOnpressed: () => setState(() {
+                      obscureText = !obscureText;
+                    }),
+                  ),
+                  MyTextFormField(
+                    sectionText: "Confirm password",
+                    controller: confirmPassword,
+                    hintText: "Confirm new password",
+                    obscureText: obscureText,
+                    suffixIcon: Icon(
+                      obscureText
+                          ? Icons.visibility_off_rounded
+                          : Icons.visibility_rounded,
+                    ),
+                    suffixOnpressed: () => setState(() {
+                      obscureText = !obscureText;
+                    }),
+                    validator: (value) => signupConfirmPasswordValidator(
+                      value,
+                      password.text,
+                    ),
+                  ),
+                ],
+              ).pSymmetric(),
             ),
 
             SizedBox(height: 75.h),
@@ -118,7 +111,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
                 context.goNamed(AppRoutes.login.name);
 
-                log.i("IMPLEMNENT FIREBASE CHANGE PASSWORD");
+                log.d("IMPLEMNENT FIREBASE CHANGE PASSWORD");
               },
             ).pSymmetric(),
 

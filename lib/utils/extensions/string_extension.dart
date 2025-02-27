@@ -13,6 +13,7 @@ extension MyStringExtension on String {
 
   bool get beginsWithVowel {
     if (trim().isEmpty) return false;
+
     return ['a', 'e', 'i', 'o', 'u'].contains(this[0].toLowerCase());
   }
 

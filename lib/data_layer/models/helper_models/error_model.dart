@@ -30,8 +30,8 @@ class AppError extends Error {
 
   static Map<String, String> handleError(Object e) {
     // String errno = "$e".split('errno = ')[1].split('),')[0];
-    // log.i("E R R O R NUMBER IS $errno :::");
-    log.i(" E R R IS $e");
+    // log.d("E R R O R NUMBER IS $errno :::");
+    log.d(" E R R IS $e");
     if (e is http.ClientException || e is TlsException) {
       return {
         "title": "Network Error",
@@ -39,7 +39,7 @@ class AppError extends Error {
             "Please check your internet connection or switch to a different network.",
       };
     } else {
-      // log.i("U N K N O W N ERROR IS $e");
+      // log.d("U N K N O W N ERROR IS $e");
       return {
         "title": "Something went wrong",
         "code": "100",

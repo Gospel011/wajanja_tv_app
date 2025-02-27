@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 
@@ -10,11 +9,11 @@ extension ScrollControllerExtensions on ScrollController {
       final maxScrollExtent = position.maxScrollExtent;
       if (position.atEdge) {
         if (position.pixels == maxScrollExtent) {
-          log.i("Bottom");
+          log.d("Bottom");
 
           if (!reverse) callback();
         } else {
-          log.i("top");
+          log.d("top");
 
           if (reverse) callback();
         }

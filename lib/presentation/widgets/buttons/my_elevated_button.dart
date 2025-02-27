@@ -56,10 +56,10 @@ class MyElevatedButton extends StatelessWidget {
             loading != true
                 ? Text(text, style: textStyle)
                 : const Center(
-                  // height: 24,
-                  // width: 24,
-                  child: MyLoadingWidget(),
-                ),
+                    // height: 24,
+                    // width: 24,
+                    child: MyLoadingWidget(),
+                  ),
             if (icon != null) Icon(icon) else const SizedBox(width: 0),
           ],
         ),

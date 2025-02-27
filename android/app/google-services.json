@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1029559576810",
+    "project_id": "wajanja-44c93",
+    "storage_bucket": "wajanja-44c93.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1029559576810:android:e39e75963d1e88d60f0f93",
+        "android_client_info": {
+          "package_name": "com.example.wajanja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5qgR32qImJy0DIjPUWSCRgMSfsmxuJuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
