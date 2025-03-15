@@ -148,6 +148,18 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    _setState(state.copyWith(states: AuthStates.sendingPasswordResetEmail));
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      _setState(state.copyWith(states: AuthStates.passwordResetEmailSent));
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseAuthException(e,
+          errorState: AuthStates.sendingPasswordResetEmailFailed);
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     _setState(state.copyWith(states: AuthStates.signingInWithGoogle));
 
@@ -197,7 +209,6 @@ class AuthNotifier extends Notifier<AuthState> {
         GoogleSignIn().signOut(),
         FirebaseAuth.instance.signOut(),
       ]);
-      
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e, errorState: AuthStates.signingOutFailed);
       return;

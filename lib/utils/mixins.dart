@@ -18,6 +18,25 @@ mixin AuthMixin {
   }
 }
 
+mixin UrlMixin on UiInfoMixin {
+  Future<void> openMailingApp(BuildContext context) async {
+    final uri = Uri(scheme: 'mailto');
+
+    if (await canLaunchUrl(uri)) {
+      launchUrl(
+        uri,
+      );
+    } else {
+      if (!context.mounted) return;
+
+      showSnackMessage(context, "Could not open mailing app");
+    }
+
+    // context,
+    // errorMessage: "Could not open email app",
+  }
+}
+
 mixin UiInfoMixin {
   void unfocus() {
     FocusManager.instance.primaryFocus?.unfocus();
@@ -108,11 +127,16 @@ mixin UiInfoMixin {
 
   /// Shows a message to the user in the form of a dialog with a [title] and
   /// [content]
-  Future<dynamic> showMessage(context, String title, String content) {
+  Future<dynamic> showMessage(context, String title, String content,
+      {List<Widget>? actions}) {
     return showDialog(
       context: context,
       builder: (context) {
-        return MyDialog(title: title, content: content);
+        return MyDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        );
       },
     );
   }
