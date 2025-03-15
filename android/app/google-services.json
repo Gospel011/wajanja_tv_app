@@ -12,7 +12,20 @@
           "package_name": "com.example.wajanja"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1029559576810-17tddh5sei20uefavq7139tssnqhs3dq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wajanja",
+            "certificate_hash": "eb7876a9b614089a2bc13243d421c6003fdf84b7"
+          }
+        },
+        {
+          "client_id": "1029559576810-lait15bcj4bg2fulls3ljdn0q6acejis.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA5qgR32qImJy0DIjPUWSCRgMSfsmxuJuA"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1029559576810-lait15bcj4bg2fulls3ljdn0q6acejis.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1029559576810-t6m39mtgbaofdgcc6pclv13d8f2au02s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.wajanja"
+              }
+            }
+          ]
         }
       }
     }

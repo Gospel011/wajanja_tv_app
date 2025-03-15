@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_state.dart';
@@ -147,11 +148,56 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    _setState(state.copyWith(states: AuthStates.signingInWithGoogle));
+
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      _setState(state.copyWith(
+          states: AuthStates.signingInWithGoogleFailed,
+          error: AppError(
+              title: "Error",
+              content: "We couldn't sign you in with google at the moment")));
+
+      return;
+    }
+    // if
+
+    try {
+      final GoogleSignInAuthentication auth = await googleUser.authentication;
+
+      final googleAuthCredential = GoogleAuthProvider.credential(
+        accessToken: auth.accessToken,
+        idToken: auth.idToken,
+      );
+
+      final UserCredential credential = await FirebaseAuth.instance
+          .signInWithCredential(googleAuthCredential);
+
+      final newUser = models.User.fromCredential(credential);
+
+      _setState(
+        state.copyWith(
+          states: AuthStates.signingInWithGoogleSuccessful,
+          user: newUser,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      _handleFirebaseAuthException(e,
+          errorState: AuthStates.signingInWithGoogleFailed);
+    }
+  }
+
   Future<void> logout() async {
     _setState(state.copyWith(states: AuthStates.signingOut));
 
     try {
-      await FirebaseAuth.instance.signOut();
+      await Future.wait([
+        GoogleSignIn().signOut(),
+        FirebaseAuth.instance.signOut(),
+      ]);
+      
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e, errorState: AuthStates.signingOutFailed);
       return;

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
+import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
 import 'package:wajanja/presentation/widgets/my_textformfield.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
@@ -22,7 +23,7 @@ class SignupPage extends ConsumerStatefulWidget {
 
 class _SignupPageState extends ConsumerState<SignupPage> with UiInfoMixin {
   final fullName = TextEditingController(text: 'Faro Dojeh');
-  final email = TextEditingController(text: 'demohe6235@apklamp.com');
+  final email = TextEditingController(text: 'dipogoh387@bankrau.com');
   final phone = TextEditingController(text: '09090899878');
   final password = TextEditingController(text: 'testUser1@');
   final confirmPassword = TextEditingController(text: 'testUser1@');
@@ -118,13 +119,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with UiInfoMixin {
                 ),
               ],
             ).pSymmetric(),
-            MyElevatedButton(
-              text: "Continue with google",
-              leadingIcon: AppSvgs.googleLogo,
-              onPressed: () {
-                context.goNamed(AppRoutes.signup.name);
-              },
-            ).pSymmetric(),
+            MyGoogleSignInButton().pSymmetric(),
             SizedBox(height: 16.h),
           ],
         );

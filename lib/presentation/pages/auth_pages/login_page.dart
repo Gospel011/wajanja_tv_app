@@ -1,10 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
+import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_text_button.dart';
 import 'package:wajanja/presentation/widgets/my_dialog.dart';
 import 'package:wajanja/presentation/widgets/my_textformfield.dart';
@@ -23,7 +26,7 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> with UiInfoMixin {
-  final email = TextEditingController(text: 'demohe6235@apklamp.com');
+  final email = TextEditingController(text: 'dipogoh387@bankrau.com');
   final password = TextEditingController(text: 'testUser1@');
 
   bool obscureText = true;
@@ -42,15 +45,14 @@ class _LoginPageState extends ConsumerState<LoginPage> with UiInfoMixin {
 
   @override
   Widget build(BuildContext context) {
-
     log.f("IS AT LOGIN: $isAtLogin");
 
-    
     ref.listen(authNotifierProvider, (prev, next) {
       log.i("MOUNTED: $mounted, CONTEXT.MOUNTED: ${context.mounted}");
 
       switch (next.states) {
         case AuthStates.loggedIn:
+        case AuthStates.signingInWithGoogleSuccessful:
           context.goNamed(AppRoutes.home.name);
           break;
         case AuthStates.loggingInFailed:
@@ -133,19 +135,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with UiInfoMixin {
               ),
             ],
           ).pSymmetric(),
-          MyElevatedButton(
-            text: "Continue with google",
-            leadingIcon: AppSvgs.googleLogo,
-            onPressed: () {
-              // context.goNamed(AppRoutes.signup.name);
-
-              showSnackMessage(
-                context,
-                "Implement google signin",
-                flushbarPosition: FlushbarPosition.TOP,
-              );
-            },
-          ).pSymmetric(),
+          MyGoogleSignInButton().pSymmetric(),
           SizedBox(height: 16.h),
         ],
       ),

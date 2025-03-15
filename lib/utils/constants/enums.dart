@@ -21,6 +21,9 @@ enum AuthStates {
   emailVerificationSent,
   signingOut,
   signingOutFailed,
+  signingInWithGoogle,
+  signingInWithGoogleFailed,
+  signingInWithGoogleSuccessful,
 }
 
 enum OnboardingIllustrations {
@@ -157,9 +160,31 @@ enum FirebaseAuthExceptions {
   invalidLoginCredential(
     "Your email or password is incorrect",
   ),
+  accountExistsWithDifferentCredential(
+      "Please use the appropriate signin method for this account."),
+  invalidCredential("Please try again"),
   unknownError(
     "We could not complete your request at the moment, please try again later",
   );
+
+  /**
+   * :
+Thrown if there already exists an account with the email address asserted by the credential. Resolve this by calling [fetchSignInMethodsForEmail] and then asking the user to sign in using one of the returned providers. Once the user is signed in, the original credential can be linked to the user with [linkWithCredential].
+:
+Thrown if the credential is malformed or has expired.
+operation-not-allowed:
+Thrown if the type of account corresponding to the credential is not enabled. Enable the account type in the Firebase Console, under the Auth tab.
+user-disabled:
+Thrown if the user corresponding to the given credential has been disabled.
+user-not-found:
+Thrown if signing in with a credential from [EmailAuthProvider.credential] and there is no user corresponding to the given email.
+wrong-password:
+Thrown if signing in with a credential from [EmailAuthProvider.credential] and the password is invalid for the given email, or if the account corresponding to the email does not have a password set.
+invalid-verification-code:
+Thrown if the credential is a [PhoneAuthProvider.credential] and the verification code of the credential is not valid.
+invalid-verification-id:
+Thrown if the credential is a [PhoneAuthProvider.credential] and the verification ID of the credential is not valid.id.
+   */
 
   String get describe => name.kebabCase.capitalize.replaceAll('-', ' ');
 
@@ -192,6 +217,8 @@ enum FirebaseAuthExceptions {
       case 'invalid-credential':
       case 'INVALID_LOGIN_CREDENTIALS':
         return FirebaseAuthExceptions.invalidLoginCredential;
+      case 'account-exists-with-different-credential':
+        return FirebaseAuthExceptions.accountExistsWithDifferentCredential;
       default:
         return FirebaseAuthExceptions.unknownError;
     }

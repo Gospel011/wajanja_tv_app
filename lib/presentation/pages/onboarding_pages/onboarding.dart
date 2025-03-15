@@ -1,9 +1,12 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
+import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
 import 'package:wajanja/utils/constants/app_colors.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
@@ -11,15 +14,15 @@ import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
 
-
-class Onboarding extends StatefulWidget {
+class Onboarding extends ConsumerStatefulWidget {
   const Onboarding({super.key});
 
   @override
-  State<Onboarding> createState() => _OnboardingState();
+  ConsumerState<Onboarding> createState() => _OnboardingState();
 }
 
-class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
+class _OnboardingState extends ConsumerState<Onboarding>
+    with AuthMixin, UiInfoMixin {
   Brightness get brightness => Theme.of(context).brightness;
   List<OnboardingIllustrations> get illustrations =>
       OnboardingIllustrations.themeIllustrations(brightness);
@@ -37,6 +40,20 @@ class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      authNotifierProvider,
+      (previous, next) {
+        switch (next.states) {
+          case AuthStates.signingInWithGoogleSuccessful:
+            context.goNamed(AppRoutes.home.name);
+            break;
+          case AuthStates.signingInWithGoogleFailed:
+            showErrorDialog(context, error: next.error!);
+            break;
+          default:
+        }
+      },
+    );
     return Scaffold(
       // appBar: AppBar(title: const Text('Wajanja Tv')),
       bottomNavigationBar: Column(
@@ -51,29 +68,30 @@ class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
                 context.goNamed(AppRoutes.login.name);
               },
               textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
               backgroundColor: Theme.of(context).colorScheme.surfaceTint,
               // leadingIcon: Icon(Icons.email_outlined, size: 24.r,),
               text: "Continue with email",
             ).pSymmetric(),
-          MyElevatedButton(
-            onPressed:
-                isLastPage
-                    ? () {
-                      googleSignIn();
+          isLastPage
+              ? MyGoogleSignInButton().pAll(16.r)
+              : MyElevatedButton(
+                  onPressed: isLastPage
+                      ? () {
+                          // googleSignIn();
 
-                      showSnackMessage(
-                        context,
-                        "Implement google signin",
-                        flushbarPosition: FlushbarPosition.TOP,
-                      );
-                    }
-                    : next,
-            text: isLastPage ? "Continue with google" : "Next",
-            leadingIcon: isLastPage ? AppSvgs.googleLogo : null,
-          ).pAll(16.r),
+                          // showSnackMessage(
+                          //   context,
+                          //   "Implement google signin",
+                          //   flushbarPosition: FlushbarPosition.TOP,
+                          // );
+                        }
+                      : next,
+                  text: "Next",
+                  leadingIcon: isLastPage ? AppSvgs.googleLogo : null,
+                ).pAll(16.r),
         ],
       ),
       body: Column(
@@ -101,7 +119,9 @@ class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
                     Text(
                       illustration.title,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(illustration.subtitle, textAlign: TextAlign.center),
@@ -110,9 +130,7 @@ class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
               },
             ),
           ),
-
           SizedBox(height: 65.h),
-
           Row(
             mainAxisSize: MainAxisSize.min,
             spacing: 10.w,
@@ -124,10 +142,9 @@ class _OnboardingState extends State<Onboarding> with AuthMixin, UiInfoMixin {
                 height: 16.r,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color:
-                      onIndex
-                          ? Theme.of(context).colorScheme.primary
-                          : Colors.transparent,
+                  color: onIndex
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
                   border: Border.all(
                     color: Theme.of(context).colorScheme.outline,
                   ),

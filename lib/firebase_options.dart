@@ -63,6 +63,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1029559576810',
     projectId: 'wajanja-44c93',
     storageBucket: 'wajanja-44c93.firebasestorage.app',
+    androidClientId: '1029559576810-17tddh5sei20uefavq7139tssnqhs3dq.apps.googleusercontent.com',
+    iosClientId: '1029559576810-t6m39mtgbaofdgcc6pclv13d8f2au02s.apps.googleusercontent.com',
     iosBundleId: 'com.example.wajanja',
   );
+
 }

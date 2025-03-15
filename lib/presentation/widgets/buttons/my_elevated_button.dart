@@ -43,13 +43,13 @@ class MyElevatedButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: mainAxisSize,
           children: [
-            if (leadingIcon != null)
+            if (leadingIcon != null && (loading == false || loading == null))
               leadingIcon is Widget
                   ? leadingIcon
                   : SvgPicture.asset(leadingIcon!)
             else
               const SizedBox(width: 0),
-            if (leadingIcon != null)
+            if (leadingIcon != null && (loading == false || loading == null))
               const SizedBox(width: 10)
             else
               const SizedBox(width: 0),
