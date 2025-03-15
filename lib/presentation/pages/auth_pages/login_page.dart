@@ -1,17 +1,13 @@
-import 'package:another_flushbar/flushbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_text_button.dart';
 import 'package:wajanja/presentation/widgets/my_dialog.dart';
 import 'package:wajanja/presentation/widgets/my_textformfield.dart';
-import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';

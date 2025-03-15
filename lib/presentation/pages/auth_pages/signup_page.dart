@@ -7,7 +7,6 @@ import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
 import 'package:wajanja/presentation/widgets/my_textformfield.dart';
-import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -94,7 +93,11 @@ class _SignupPageState extends ConsumerState<SignupPage> with UiInfoMixin {
                 ref
                     .read(authNotifierProvider.notifier)
                     .createUserWithEmailAndPassword(
-                        email: emailStr, password: passwordStr);
+                      email: emailStr,
+                      password: passwordStr,
+                      fullName: fullName.text.trim(),
+                      phone: phone.text.trim(),
+                    );
 
                 // context.pushNamed(AppRoutes.emailVerification.name);
 

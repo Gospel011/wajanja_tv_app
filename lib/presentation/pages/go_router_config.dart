@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
-import 'package:wajanja/data_layer/providers/auth_provider/auth_state.dart';
 import 'package:wajanja/presentation/pages/auth_pages/email_verification_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/forgot_password_page%20copy.dart';
 import 'package:wajanja/presentation/pages/auth_pages/login_page.dart';

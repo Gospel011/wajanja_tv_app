@@ -270,3 +270,19 @@ operation-not-allowed:
 Thrown if email/password accounts are not enabled. Enable email/password accounts in the Firebase Console, under the Auth tab.
  */
 }
+
+enum UserStates {
+  initial,
+
+  fetchingUser,
+  userFetched,
+  fetchingUserFailed, upsertingUser, userUpserted, upsertingUserFailed,
+}
+
+enum CollectionPaths {
+  users('users');
+
+  final String path;
+
+  const CollectionPaths(this.path);
+}

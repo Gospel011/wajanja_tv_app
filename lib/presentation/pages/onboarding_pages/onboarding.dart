@@ -1,4 +1,3 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_google_sign_in_button.dart';
-import 'package:wajanja/utils/constants/app_colors.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';

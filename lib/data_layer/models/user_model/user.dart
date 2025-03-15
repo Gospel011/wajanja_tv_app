@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:hive_flutter/hive_flutter.dart';
 part 'user.g.dart';
@@ -20,6 +21,8 @@ class User {
   final String? photoURL;
   @HiveField(5)
   final bool emailVerified;
+  // @HiveField(6)
+  // late Timestamp createdAt;
   User({
     this.fullName,
     this.email,
@@ -27,7 +30,10 @@ class User {
     this.country,
     this.photoURL,
     this.emailVerified = false,
-  });
+    // Timestamp? createdAt,
+  }) {
+    // this.createdAt = createdAt ?? Timestamp.now();
+  }
 
   factory User.fromCredential(firebase.UserCredential credential) {
     return User(
@@ -36,6 +42,17 @@ class User {
       photoURL: credential.user?.photoURL,
       emailVerified: credential.user?.emailVerified ?? false,
     );
+  }
+
+  factory User.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    final data = snapshot.data();
+
+    return User.fromMap(data!);
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return toMap()..removeWhere((key, value) => value == null);
   }
 
   User copyWith({
@@ -64,6 +81,7 @@ class User {
       'country': country,
       'photoURL': photoURL,
       'emailVerified': emailVerified,
+      // 'createdAt': createdAt
     };
   }
 

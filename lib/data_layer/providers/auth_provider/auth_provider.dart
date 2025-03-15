@@ -4,14 +4,23 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_state.dart';
+import 'package:wajanja/data_layer/providers/user_provider/user_provider.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart' as models;
 import 'package:wajanja/utils/helpers/logger.dart';
 
 class AuthNotifier extends Notifier<AuthState> {
+  UserState? userState;
+  UserNotifier? userNotifier;
+
   @override
   AuthState build() {
     final user = UserDb.instance.retrieveUser();
+
+    userState = ref.watch(userNotifierProvider);
+    userNotifier = ref.read(userNotifierProvider.notifier);
+
+    log.f("USER STATE: $userState");
 
     return AuthState(states: AuthStates.initial, user: user);
   }
@@ -65,6 +74,10 @@ class AuthNotifier extends Notifier<AuthState> {
         ),
       ));
     } else {
+      userNotifier!.upsertUser(
+          models.User(email: user.email, emailVerified: user.emailVerified));
+
+          
       _setState(
         state.copyWith(
           states: AuthStates.checkingEmailVerificationStatusSuccessful,
@@ -130,11 +143,17 @@ class AuthNotifier extends Notifier<AuthState> {
           ),
         ));
       } else {
-        final newUser = models.User.fromCredential(credential);
+        models.User newUser = models.User.fromCredential(credential);
 
-        if (user != null) {
-          UserDb.instance.save(newUser);
+        await userNotifier!.fetchUser(email);
+
+        if (userState?.state == UserStates.userFetched) {
+          newUser = userState!.user!;
         }
+
+        // if (newUser != null) {
+        UserDb.instance.save(newUser);
+        // }
 
         _setState(
           state.copyWith(
@@ -145,7 +164,25 @@ class AuthNotifier extends Notifier<AuthState> {
       }
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e, errorState: AuthStates.loggingInFailed);
+    } catch (e) {
+      _handleGenericError(
+        e,
+        states: AuthStates.loggingInFailed,
+        // message: "We could not log you in at the moment, please try again.",
+      );
     }
+  }
+
+  void _handleGenericError(e, {String? message, required AuthStates states}) {
+    _setState(
+      state.copyWith(
+        states: states,
+        error: AppError(
+          title: "Error",
+          content: message ?? e.toString(),
+        ),
+      ),
+    );
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
@@ -187,7 +224,16 @@ class AuthNotifier extends Notifier<AuthState> {
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithCredential(googleAuthCredential);
 
-      final newUser = models.User.fromCredential(credential);
+      models.User newUser = models.User.fromCredential(credential);
+
+      await userNotifier!.upsertUser(newUser);
+      await userNotifier!.fetchUser(newUser.email!);
+
+      if (userState?.state == UserStates.userFetched) {
+        newUser = userState!.user!;
+      }
+
+      UserDb.instance.save(newUser);
 
       _setState(
         state.copyWith(
@@ -198,6 +244,13 @@ class AuthNotifier extends Notifier<AuthState> {
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e,
           errorState: AuthStates.signingInWithGoogleFailed);
+    } catch (e) {
+      log.f("ERROR IS: $e");
+      _handleGenericError(
+        e,
+        states: AuthStates.signingInWithGoogleFailed,
+        // message: "We could not sign you in with google at the moment",
+      );
     }
   }
 
@@ -220,13 +273,21 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> createUserWithEmailAndPassword(
-      {required String email, required String password}) async {
+      {required String email,
+      required String fullName,
+      required String phone,
+      required String password}) async {
     _setState(state.copyWith(states: AuthStates.signingUp));
     try {
       final UserCredential credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       sendEmailVerification();
+
+      final userToUpsert =
+          models.User(email: email, fullName: fullName, phone: phone);
+
+      await userNotifier!.upsertUser(userToUpsert);
 
       _setState(
         state.copyWith(
@@ -236,6 +297,8 @@ class AuthNotifier extends Notifier<AuthState> {
       );
     } on FirebaseAuthException catch (e) {
       _handleFirebaseAuthException(e, errorState: AuthStates.signingUpFailed);
+    } catch (e) {
+      _handleGenericError(e, states: AuthStates.signingUpFailed);
     }
   }
 
