@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/pages/auth_pages/email_verification_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/forgot_password_page%20copy.dart';
@@ -8,7 +9,9 @@ import 'package:wajanja/presentation/pages/auth_pages/login_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/reset_password_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_success_page.dart';
+import 'package:wajanja/presentation/pages/home_pages/home.dart';
 import 'package:wajanja/presentation/pages/home_pages/home_page.dart';
+import 'package:wajanja/presentation/pages/home_pages/video_description.dart';
 import 'package:wajanja/presentation/pages/onboarding_pages/onboarding.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -26,27 +29,38 @@ class AppRouterConfig {
       initialLocation: '/${AppRoutes.onboarding.path}',
       // initialLocation: '/login',
       routes: [
-        // StatefulShellRoute.indexedStack(
-        //   builder: (context, state, navigationShell) {
-        //     return HomePage(shell: navigationShell);
-        //   },
-        //   branches: [
-        //     // lodges
-
-        //     // roommates
-
-        //     // services
-
-        //     // requests
-        //   ],
-        // ),
-
-        GoRoute(
-          name: AppRoutes.home.name,
-          path: "/${AppRoutes.home.path}",
-          builder: (context, state) {
-            return HomePage();
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return Home(shell: navigationShell);
           },
+          branches: [
+            // lodges
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: AppRoutes.home.name,
+                path: "/${AppRoutes.home.path}",
+                builder: (context, state) {
+                  return HomePage();
+                },
+
+                routes: [
+                  GoRoute(
+                  name: AppRoutes.videoDescription.name,
+                  path: "video-description",
+                  builder: (context, state) {
+                    final video = state.extra as Video;
+                    return VideoDescription(video: video);
+                  }),
+                ]
+              ),
+            ])
+
+            // roommates
+
+            // services
+
+            // requests
+          ],
         ),
 
         //? E M A I L   V E R I F I C  A T I O N
@@ -139,17 +153,17 @@ class AppRouterConfig {
         final user = ref.read(authNotifierProvider).user;
         bool isLoggedIn = user != null && user.emailVerified;
 
-        log.f("USER: $user");
+        log.i("USER: $user");
 
         String currentLocation = state.matchedLocation;
 
         // log.d("CHECKING AUTH CUBIT: ${authCubit.state}");
 
-        log.d("Current location $currentLocation is logged in $isLoggedIn");
+        log.f("Current location $currentLocation is logged in $isLoggedIn");
 
         if ((currentLocation == '/login' || currentLocation == '/onboarding') &&
             isLoggedIn == true) {
-          log.d("\n::: \nUser is logged in so redirecting to home\n::: ");
+          log.f("\n::: \nUser is logged in so redirecting to home\n::: ");
           return '/home'; //? original
 
           // return '/roommates-page/roommates-filter';

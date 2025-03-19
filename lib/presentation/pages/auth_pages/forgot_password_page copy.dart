@@ -54,7 +54,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       onPressed: () {
-                        log.f("Open email app");
+                        log.i("Open email app");
 
                         openMailingApp(context);
                       },

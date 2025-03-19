@@ -41,7 +41,7 @@ class _LoginPageState extends ConsumerState<LoginPage> with UiInfoMixin {
 
   @override
   Widget build(BuildContext context) {
-    log.f("IS AT LOGIN: $isAtLogin");
+    log.i("IS AT LOGIN: $isAtLogin");
 
     ref.listen(authNotifierProvider, (prev, next) {
       log.i("MOUNTED: $mounted, CONTEXT.MOUNTED: ${context.mounted}");

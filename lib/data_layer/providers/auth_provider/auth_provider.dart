@@ -15,12 +15,17 @@ class AuthNotifier extends Notifier<AuthState> {
 
   @override
   AuthState build() {
-    final user = UserDb.instance.retrieveUser();
+    models.User? user = UserDb.instance.retrieveUser();
 
     userState = ref.watch(userNotifierProvider);
     userNotifier = ref.read(userNotifierProvider.notifier);
 
-    log.f("USER STATE: $userState");
+    log.f("NEW USER STATE: $userState");
+
+    if (userState?.state == UserStates.userFetched) {
+      user = userState!.user!;
+      UserDb.instance.save(user);
+    }
 
     return AuthState(states: AuthStates.initial, user: user);
   }
@@ -77,7 +82,6 @@ class AuthNotifier extends Notifier<AuthState> {
       userNotifier!.upsertUser(
           models.User(email: user.email, emailVerified: user.emailVerified));
 
-          
       _setState(
         state.copyWith(
           states: AuthStates.checkingEmailVerificationStatusSuccessful,
@@ -143,22 +147,20 @@ class AuthNotifier extends Notifier<AuthState> {
           ),
         ));
       } else {
-        models.User newUser = models.User.fromCredential(credential);
+        // models.User newUser = models.User.fromCredential(credential);
+
+        // log.f("FETCHING USER: $userState");
 
         await userNotifier!.fetchUser(email);
 
-        if (userState?.state == UserStates.userFetched) {
-          newUser = userState!.user!;
-        }
+        // log.f("User state after request: $userState");
 
-        // if (newUser != null) {
-        UserDb.instance.save(newUser);
         // }
 
         _setState(
           state.copyWith(
             states: AuthStates.loggedIn,
-            user: newUser,
+            // user: newUser,
           ),
         );
       }
@@ -245,7 +247,7 @@ class AuthNotifier extends Notifier<AuthState> {
       _handleFirebaseAuthException(e,
           errorState: AuthStates.signingInWithGoogleFailed);
     } catch (e) {
-      log.f("ERROR IS: $e");
+      log.i("ERROR IS: $e");
       _handleGenericError(
         e,
         states: AuthStates.signingInWithGoogleFailed,

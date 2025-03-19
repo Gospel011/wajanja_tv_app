@@ -53,6 +53,10 @@ dependencies:
   hive_flutter: ^1.1.0
   google_sign_in: ^6.3.0
   cloud_firestore: ^5.6.5
+  cached_network_image: ^3.4.1
+  video_player: ^2.9.3
+  youtube_player_flutter: ^9.1.1
+  share_plus: ^10.1.4
 
 dev_dependencies:
   flutter_test:

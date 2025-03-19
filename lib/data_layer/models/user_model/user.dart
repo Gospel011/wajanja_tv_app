@@ -35,6 +35,9 @@ class User {
     // this.createdAt = createdAt ?? Timestamp.now();
   }
 
+  String get initials =>
+      (fullName ?? 'i').split(' ').map((el) => el[0].toUpperCase()).join('');
+
   factory User.fromCredential(firebase.UserCredential credential) {
     return User(
       email: credential.user?.email,

@@ -18,6 +18,11 @@ mixin AuthMixin {
   }
 }
 
+mixin ThemesMixin<T extends StatefulWidget> on State<T> {
+  TextTheme get textTheme => Theme.of(context).textTheme;
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
+}
+
 mixin UrlMixin on UiInfoMixin {
   Future<void> openMailingApp(BuildContext context) async {
     final uri = Uri(scheme: 'mailto');

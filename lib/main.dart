@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
@@ -22,16 +24,34 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
   static final routerConfig = AppRouterConfig();
 
+  late final GoRouter router;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    router = routerConfig.createRouter(ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(440, 956),
       minTextAdapt: true,
@@ -49,7 +69,7 @@ class MyApp extends ConsumerWidget {
             themeMode: ThemeMode.system,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
-            routerConfig: routerConfig.createRouter(ref),
+            routerConfig: router,
           );
         },
       ),

@@ -22,7 +22,9 @@ class AppThemes {
       onSecondaryContainer: AppColors.bgDark,
       tertiary: AppColors.gray500,
       outline: AppColors.gray500Light,
+      outlineVariant: AppColors.gray500,
       surfaceTint: AppColors.yellowGreenLight,
+      tertiaryFixed: AppColors.hintLight,
     ),
     useMaterial3: false,
 
@@ -190,7 +192,9 @@ class AppThemes {
       onSecondaryContainer: AppColors.white,
       tertiary: AppColors.gray500,
       outline: AppColors.gray500,
+      outlineVariant: AppColors.gray500Light,
       surfaceTint: AppColors.yellowGreenLight,
+      tertiaryFixed: AppColors.hintLight, 
     ),
     useMaterial3: false,
 

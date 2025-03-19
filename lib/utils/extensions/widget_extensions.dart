@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:wajanja/presentation/widgets/custom_badge.dart';
 
 extension WidgetExtension on Widget {
@@ -86,6 +87,19 @@ extension WidgetExtension on Widget {
     return animate(onComplete: (controller) => controller.repeat()).shimmer(
       delay: delay ?? const Duration(milliseconds: 500),
       duration: duration ?? const Duration(milliseconds: 1400),
+    );
+  }
+}
+
+
+extension SvgExtension on SvgPicture {
+  SvgPicture assetCopy({double? width, double? height, Color? color}) {
+    return SvgPicture.asset(
+      (bytesLoader as SvgAssetLoader).assetName,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      // ignore: deprecated_member_use
+      color: color,
     );
   }
 }

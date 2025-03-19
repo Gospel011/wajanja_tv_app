@@ -51,12 +51,12 @@ class _EmailVerificationPageState extends ConsumerState<EmailVerificationPage>
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
-        log.f("paused or inactive: ${state.name}");
+        log.i("paused or inactive: ${state.name}");
         counterStream.close();
         _timer?.cancel();
         break;
       case AppLifecycleState.resumed:
-        log.f("Resumed: ${state.name}");
+        log.i("Resumed: ${state.name}");
         counterStream = StreamController();
         initialiseTimer();
 
@@ -88,12 +88,12 @@ class _EmailVerificationPageState extends ConsumerState<EmailVerificationPage>
       print("TICK: ${timer.tick}");
       final counter = (timer.tick) % 6;
 
-      log.f("COUNTER: $counter");
+      log.i("COUNTER: $counter");
 
       counterStream.add(counter);
 
       if (counter == 0) {
-        log.f("Verify otp");
+        log.i("Verify otp");
 
         verifyOtp(null);
       }
@@ -102,7 +102,7 @@ class _EmailVerificationPageState extends ConsumerState<EmailVerificationPage>
 
   @override
   void dispose() {
-    log.f("Dispose called");
+    log.i("Dispose called");
     otp.dispose();
     _timer?.cancel();
     _resendTimer?.cancel();

@@ -26,7 +26,7 @@ enum AuthStates {
   signingInWithGoogleSuccessful,
   sendingPasswordResetEmailFailed,
   sendingPasswordResetEmail,
-  passwordResetEmailSent,
+  passwordResetEmailSent, loggedInUserFetched,
 }
 
 enum OnboardingIllustrations {
@@ -120,7 +120,7 @@ enum AppRoutes {
   home,
   forgotPassword,
   resetPassword,
-  signupSuccess;
+  signupSuccess, videoDescription;
 
   String get path => name.kebabCase;
 }
@@ -276,7 +276,10 @@ enum UserStates {
 
   fetchingUser,
   userFetched,
-  fetchingUserFailed, upsertingUser, userUpserted, upsertingUserFailed,
+  fetchingUserFailed,
+  upsertingUser,
+  userUpserted,
+  upsertingUserFailed,
 }
 
 enum CollectionPaths {
@@ -285,4 +288,76 @@ enum CollectionPaths {
   final String path;
 
   const CollectionPaths(this.path);
+}
+
+enum VideoCategories {
+  entertainment,
+  education,
+  gaming,
+  lifestyle,
+  techAndReviews,
+  music,
+  newsAndPolitics,
+  businessAndFinance,
+  scienceAndDocumentary,
+  diyAndCrafts,
+  sports,
+  healthAndWellness,
+  comedy,
+  travel,
+  foodAndCooking,
+  beautyAndFashion,
+  podcastsAndTalkShows,
+  animation,
+  motivation,
+  vlogs;
+
+  String get describe => name.kebabCase.replaceAll('-', ' ');
+
+  factory VideoCategories.fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'entertainment':
+        return VideoCategories.entertainment;
+      case 'education':
+        return VideoCategories.education;
+      case 'gaming':
+        return VideoCategories.gaming;
+      case 'lifestyle':
+        return VideoCategories.lifestyle;
+      case 'tech and reviews':
+        return VideoCategories.techAndReviews;
+      case 'music':
+        return VideoCategories.music;
+      case 'news and politics':
+        return VideoCategories.newsAndPolitics;
+      case 'business and finance':
+        return VideoCategories.businessAndFinance;
+      case 'science and documentary':
+        return VideoCategories.scienceAndDocumentary;
+      case 'diy and crafts':
+        return VideoCategories.diyAndCrafts;
+      case 'sports':
+        return VideoCategories.sports;
+      case 'health and wellness':
+        return VideoCategories.healthAndWellness;
+      case 'comedy':
+        return VideoCategories.comedy;
+      case 'travel':
+        return VideoCategories.travel;
+      case 'food and cooking':
+        return VideoCategories.foodAndCooking;
+      case 'beauty and fashion':
+        return VideoCategories.beautyAndFashion;
+      case 'podcasts and talk shows':
+        return VideoCategories.podcastsAndTalkShows;
+      case 'animation':
+        return VideoCategories.animation;
+      case 'motivation':
+        return VideoCategories.motivation;
+      case 'vlogs':
+        return VideoCategories.vlogs;
+      default:
+        throw ArgumentError('Invalid video category: $value');
+    }
+  }
 }

@@ -4,7 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
-import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
+import 'package:wajanja/data_layer/providers/user_provider/user_provider.dart';
+import 'package:wajanja/my_tests/sample_models.dart';
+import 'package:wajanja/presentation/components/video_row.dart';
+// import 'package:wajanja/my_tests/sample_video_model.dart';
+import 'package:wajanja/presentation/widgets/profile_picture.dart';
+import 'package:wajanja/presentation/widgets/video_widget.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -19,9 +24,13 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  // models.User? user;
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   user = ref.read(authNotifierProvider).user!;
+    // });
     FirebaseAuth.instance.authStateChanges().listen(
       (user) {
         if (user == null) {
@@ -35,9 +44,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(ref.read(authNotifierProvider).states);
+    log.f("STATES IN BUILD ${ref.read(userNotifierProvider)}");
+
+    final authState = ref.watch(authNotifierProvider);
+
+    final user = authState.user;
 
     ref.listen(authNotifierProvider, (prev, next) {
+      log.f("STATE: $next");
       switch (next.states) {
         case AuthStates.initial:
           context.goNamed(AppRoutes.login.name);
@@ -47,25 +61,51 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 20.h,
-          children: [
-            Text("Home page"),
-            Builder(builder: (context) {
-              final authState = ref.watch(authNotifierProvider);
+      appBar: AppBar(
+        title: Text("Videos"),
+        bottom: PreferredSize(preferredSize: Size(0, 10.h), child: Container()),
+        actions: [
+          ProfilePicture(user: user),
+          SizedBox(
+            width: 10.w,
+          )
+        ],
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 30.h,
+            ),
+          ),
+          SliverToBoxAdapter(
+              child: VideoRow(title: "New", videos: videos, maxLength: 4)),
+          SliverToBoxAdapter(
+              child: SizedBox(
+            height: 32.h,
+          )),
+          SliverGrid.builder(
+            itemCount: videos.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 9 / 16,
+                mainAxisSpacing: 10.r,
+                crossAxisSpacing: 10.r),
+            itemBuilder: (context, index) {
+              final video = videos.elementAt(index);
+              return VideoWidget(
+                  video: video,
+                  onTap: () {
+                    log.f("GO TO DESCRIPTION FOR VIDEO: $video");
 
-              return MyElevatedButton(
-                text: "Logout",
-                loading: authState.states == AuthStates.signingOut,
-                onPressed: () {
-                  ref.read(authNotifierProvider.notifier).logout();
-                },
-              ).pSymmetric();
-            }),
-          ],
-        ),
+                    context.pushNamed(
+                      AppRoutes.videoDescription.name,
+                      extra: video,
+                    );
+                  });
+            },
+          ).spSymmetric(horizontal: 16.w)
+        ],
       ),
     );
   }
