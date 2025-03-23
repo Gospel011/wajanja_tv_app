@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
+import 'package:wajanja/my_tests/sample_news.dart';
 import 'package:wajanja/presentation/pages/auth_pages/email_verification_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/forgot_password_page%20copy.dart';
 import 'package:wajanja/presentation/pages/auth_pages/login_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/reset_password_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_success_page.dart';
-import 'package:wajanja/presentation/pages/home_pages/audiobooks.dart';
-import 'package:wajanja/presentation/pages/home_pages/home.dart';
-import 'package:wajanja/presentation/pages/home_pages/home_page.dart';
-import 'package:wajanja/presentation/pages/home_pages/news.dart';
-import 'package:wajanja/presentation/pages/home_pages/podcasts.dart';
-import 'package:wajanja/presentation/pages/home_pages/video_description.dart';
+import 'package:wajanja/presentation/pages/audiobooks/audiobooks.dart';
+import 'package:wajanja/presentation/pages/news/news_details.dart';
+import 'package:wajanja/presentation/pages/videos/home.dart';
+import 'package:wajanja/presentation/pages/videos/home_page.dart';
+import 'package:wajanja/presentation/pages/news/news.dart';
+import 'package:wajanja/presentation/pages/podcasts/podcasts.dart';
+import 'package:wajanja/presentation/pages/videos/video_description.dart';
 import 'package:wajanja/presentation/pages/onboarding_pages/onboarding.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -60,12 +63,22 @@ class AppRouterConfig {
             //* NEWS
             StatefulShellBranch(routes: [
               GoRoute(
-                name: AppRoutes.news.name,
-                path: "/${AppRoutes.news.path}",
-                builder: (context, state) {
-                  return NewsPage();
-                },
-              ),
+                  name: AppRoutes.news.name,
+                  path: "/${AppRoutes.news.path}",
+                  builder: (context, state) {
+                    return NewsPage();
+                  },
+                  routes: [
+                    GoRoute(
+                        name: AppRoutes.newsDetails.name,
+                        path: AppRoutes.newsDetails.path,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          return NewsDetails(
+                            news: (state.extra ?? sampleNews.elementAt(0)) as News,
+                          );
+                        }),
+                  ]),
             ]),
 
             // * AUDIO BOOKS PAGE

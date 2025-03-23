@@ -3,15 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 
-
-
 class ProfilePicture extends StatelessWidget {
-  const ProfilePicture({
-    super.key,
-    required this.user,
-  });
+  const ProfilePicture({super.key, required this.user, this.size});
 
   final User? user;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +18,7 @@ class ProfilePicture extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: user?.photoURL ?? '',
           fit: BoxFit.cover,
-          width: 50.r,
+          width: size ?? 50.r,
           errorWidget: (context, url, error) {
             return Container(
                 alignment: Alignment.center,

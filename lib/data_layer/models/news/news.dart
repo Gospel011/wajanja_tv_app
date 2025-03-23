@@ -2,25 +2,33 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import 'package:wajanja/data_layer/models/news/news_section.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 
 class News {
   final String postedBy;
-  final String? coverPhoto;
+  final String coverPhoto;
   final String title;
   final Timestamp createdAt;
   final NewsCategory category;
   final List<NewsSection> sections;
+  final List<String> likes;
+  final List<String> dislikes;
+
   News({
     required this.postedBy,
-    this.coverPhoto,
+    required this.coverPhoto,
     required this.title,
     required this.createdAt,
     required this.category,
     required this.sections,
+    required this.likes,
+    required this.dislikes,
   });
+
+  String get shortDate => DateFormat("MMM dd, yyyy").format(createdAt.toDate());
 
   News copyWith({
     String? postedBy,
@@ -29,6 +37,8 @@ class News {
     Timestamp? createdAt,
     NewsCategory? category,
     List<NewsSection>? sections,
+    List<String>? likes,
+    List<String>? dislikes,
   }) {
     return News(
       postedBy: postedBy ?? this.postedBy,
@@ -37,6 +47,8 @@ class News {
       createdAt: createdAt ?? this.createdAt,
       category: category ?? this.category,
       sections: sections ?? this.sections,
+      likes: likes ?? this.likes,
+      dislikes: dislikes ?? this.dislikes,
     );
   }
 
@@ -48,17 +60,20 @@ class News {
       'createdAt': createdAt.toDate().toIso8601String(),
       'category': category.describe,
       'sections': sections.map((x) => x.toMap()).toList(),
+      'likes': likes,
+      'dislikes': dislikes
     };
   }
 
   factory News.fromMap(Map<String, dynamic> map) {
     return News(
       postedBy: map['postedBy'] as String,
-      coverPhoto:
-          map['coverPhoto'] != null ? map['coverPhoto'] as String : null,
+      coverPhoto: map['coverPhoto'] as String,
       title: map['title'] as String,
       createdAt: Timestamp.fromDate(DateTime.parse(map['createdAt'] as String)),
       category: NewsCategory.fromString(map['category'] as String),
+      likes: List<String>.from((map['likes'] as List<dynamic>)),
+      dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
       sections: List<NewsSection>.from(
         (map['sections'] as List<dynamic>).map<NewsSection>(
           (x) => NewsSection.fromMap(x as Map<String, dynamic>),
@@ -74,6 +89,6 @@ class News {
 
   @override
   String toString() {
-    return 'News(postedBy: $postedBy, coverPhoto: $coverPhoto, title: $title, createdAt: $createdAt, category: $category, sections: $sections)';
+    return 'News(postedBy: $postedBy, coverPhoto: $coverPhoto, title: $title, createdAt: $createdAt, category: $category, sections: $sections, likes: $likes, dislikes: $dislikes)';
   }
 }
