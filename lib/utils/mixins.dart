@@ -44,6 +44,15 @@ mixin ThemesMixin<T extends StatefulWidget> on State<T> {
   bool get isDarkTheme => Theme.of(context).brightness == Brightness.dark;
 }
 
+mixin StatelessThemesMixin {
+  TextTheme textTheme(BuildContext context) => Theme.of(context).textTheme;
+  ColorScheme colorScheme(BuildContext context) =>
+      Theme.of(context).colorScheme;
+
+  bool isDarkTheme(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+}
+
 mixin UrlMixin on UiInfoMixin {
   Future<void> openMailingApp(BuildContext context) async {
     final uri = Uri(scheme: 'mailto');

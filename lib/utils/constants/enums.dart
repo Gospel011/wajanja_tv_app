@@ -126,7 +126,7 @@ enum AppRoutes {
   videoDescription,
   news,
   audiobooks,
-  podcasts, newsDetails;
+  podcasts, newsDetails, imageView;
 
   String get path => name.kebabCase;
 }

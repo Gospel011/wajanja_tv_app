@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/models/helper_models/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
@@ -12,6 +14,7 @@ import 'package:wajanja/presentation/widgets/image_place_holder_widget.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/utils/constants/enums.dart';
+import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/mixins.dart';
 
@@ -63,7 +66,7 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
               height: 16.h,
             ),
             Text(
-              targetNews!.title,
+              targetNews!.title.capitalize,
               style: textTheme.headlineMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
@@ -78,8 +81,9 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                   children: [
                     Text(
                       postedBy.fullName!,
-                      style: textTheme.bodyMedium
-                          ?.copyWith(color: colorScheme.tertiaryFixedDim, fontWeight: FontWeight.bold),
+                      style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.tertiaryFixedDim,
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
                       widget.news.shortDate,
@@ -139,6 +143,12 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
             MyImageWidget(
               image: targetNews!.coverPhoto,
               borderRadius: 8.r,
+              onTap: () {
+                context.pushNamed(
+                  AppRoutes.imageView.name,
+                  extra: ImageExtra(image: targetNews!.coverPhoto),
+                );
+              },
             ),
             SizedBox(
               height: 42.h,
@@ -156,11 +166,11 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                 case NewsSectionType.pictures:
                   final imagesLength = section.images!.length;
 
-                  final int axisCount = imagesLength == 1
-                      ? 1
-                      : imagesLength == 2
-                          ? 2
-                          : 4;
+                  // final int axisCount = imagesLength == 1
+                  //     ? 1
+                  //     : imagesLength == 2
+                  //         ? 2
+                  //         : 4;
 
                   return Container(
                     // color: Colors.red,
@@ -200,7 +210,7 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                                           ],
                           ),
                           itemBuilder: (context, index) {
-                            final random = Random(index);
+                            // final random = Random(index);
 
                             // return Container(
                             //   color: Color.fromARGB(
@@ -212,31 +222,26 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                             // );
 
                             if (index == 4) {
-                              return Container(
-                                alignment: Alignment.center,
-                                // color: colorScheme.tertiaryFixed,
-                                color: isDarkTheme
-                                    ? colorScheme.surfaceTint
-                                        .withValues(alpha: 0.1)
-                                    : colorScheme.tertiaryFixed
-                                        .withValues(alpha: 0.1),
-                                child: Container(
-                                  padding: EdgeInsets.all(16.r),
-                                  decoration: BoxDecoration(
-                                      // color: colorScheme.surfaceTint.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle),
-                                  child: Text(
-                                    "+${imagesLength - 4}",
-                                    style: textTheme.titleMedium?.copyWith(
-                                        color: colorScheme.onSurface),
-                                  ),
-                                ),
-                              );
+                              return ImageOverflow(
+                                  overflow: imagesLength - 4,
+                                  onTap: () {
+                                    context.pushNamed(AppRoutes.imageView.name,
+                                        extra:
+                                            ImageExtra(images: section.images));
+                                  });
                             }
                             return MyImageWidget(
                               image: section.images!.elementAt(index),
                               borderRadius: 0,
                               size: 500.r,
+                              onTap: () {
+                                context.pushNamed(
+                                  AppRoutes.imageView.name,
+                                  extra: ImageExtra(
+                                      images: section.images,
+                                      currentIndex: index),
+                                );
+                              },
                               // boxfit: BoxFit.cover,
                             );
                           },
@@ -254,12 +259,49 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                 // return ImageLoadingPlaceHolderWidget(
                 //   placeHolderText: "${section.images!.length} images here",
                 // );
-                default:
-                  return Text('unknow section');
+                // default:
+                //   return Text('unknow section');
               }
             })
           ],
         ).pSymmetric(),
+      ),
+    );
+  }
+}
+
+class ImageOverflow extends StatelessWidget with StatelessThemesMixin {
+  const ImageOverflow({
+    super.key,
+    required this.overflow,
+    this.onTap,
+  });
+
+  final int overflow;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.center,
+        // color: colorScheme.tertiaryFixed,
+        color: isDarkTheme(context)
+            ? colorScheme(context).surfaceTint.withValues(alpha: 0.1)
+            : colorScheme(context).tertiaryFixed.withValues(alpha: 0.1),
+        child: Container(
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+              // color: colorScheme.surfaceTint.withValues(alpha: 0.1),
+              shape: BoxShape.circle),
+          child: Text(
+            "+$overflow",
+            style: textTheme(context)
+                .titleMedium
+                ?.copyWith(color: colorScheme(context).onSurface),
+          ),
+        ),
       ),
     );
   }

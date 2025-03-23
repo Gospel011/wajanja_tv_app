@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/models/helper_models/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
@@ -13,6 +14,7 @@ import 'package:wajanja/presentation/pages/auth_pages/signup_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_success_page.dart';
 import 'package:wajanja/presentation/pages/audiobooks/audiobooks.dart';
 import 'package:wajanja/presentation/pages/news/news_details.dart';
+import 'package:wajanja/presentation/pages/utility_pages/image_view_page.dart';
 import 'package:wajanja/presentation/pages/videos/home.dart';
 import 'package:wajanja/presentation/pages/videos/home_page.dart';
 import 'package:wajanja/presentation/pages/news/news.dart';
@@ -75,7 +77,8 @@ class AppRouterConfig {
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: (context, state) {
                           return NewsDetails(
-                            news: (state.extra ?? sampleNews.elementAt(0)) as News,
+                            news: (state.extra ?? sampleNews.elementAt(0))
+                                as News,
                           );
                         }),
                   ]),
@@ -104,6 +107,22 @@ class AppRouterConfig {
             ]),
           ],
         ),
+
+        //? IMAGE VIEW PAGE
+        GoRoute(
+            name: AppRoutes.imageView.name,
+            path: "/${AppRoutes.imageView.path}",
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final extras = state.extra as ImageExtra;
+
+              return ImageViewPage(
+                image: extras.image,
+                images: extras.images,
+                currentIndex: extras.currentIndex,
+                tag: extras.tag,
+              );
+            }),
 
         //? E M A I L   V E R I F I C  A T I O N
         GoRoute(
