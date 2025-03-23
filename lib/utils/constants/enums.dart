@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 
 enum AuthStates {
@@ -26,7 +27,8 @@ enum AuthStates {
   signingInWithGoogleSuccessful,
   sendingPasswordResetEmailFailed,
   sendingPasswordResetEmail,
-  passwordResetEmailSent, loggedInUserFetched,
+  passwordResetEmailSent,
+  loggedInUserFetched,
 }
 
 enum OnboardingIllustrations {
@@ -120,7 +122,11 @@ enum AppRoutes {
   home,
   forgotPassword,
   resetPassword,
-  signupSuccess, videoDescription;
+  signupSuccess,
+  videoDescription,
+  news,
+  audiobooks,
+  podcasts;
 
   String get path => name.kebabCase;
 }
@@ -359,5 +365,61 @@ enum VideoCategories {
       default:
         throw ArgumentError('Invalid video category: $value');
     }
+  }
+}
+
+enum NewsCategory {
+  world,
+  politics,
+  business,
+  technology,
+  science,
+  health,
+  sports,
+  entertainment,
+  environment,
+  education,
+  crime,
+  law,
+  finance,
+  economy,
+  travel,
+  food,
+  culture,
+  fashion,
+  real_estate,
+  gaming,
+  automotive,
+  startup,
+  social_media,
+  weather,
+  energy,
+  space,
+  history,
+  religion,
+  opinion,
+  breaking_news;
+
+  String get describe => name.split('_').join(' ');
+
+  factory NewsCategory.fromString(String value) {
+    return NewsCategory.values.firstWhere(
+      (category) => category.describe == value,
+      orElse: () => throw ArgumentError("Invalid category: $value"),
+    );
+  }
+}
+
+enum NewsSectionType {
+  text,
+  pictures;
+
+  String get describe => name;
+
+  factory NewsSectionType.fromString(String value) {
+    return NewsSectionType.values.firstWhere(
+      (type) => type.describe == value,
+      orElse: () => throw ArgumentError("Invalid NewsSectionType: $value"),
+    );
   }
 }

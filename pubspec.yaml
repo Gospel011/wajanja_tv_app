@@ -57,6 +57,7 @@ dependencies:
   video_player: ^2.9.3
   youtube_player_flutter: ^9.1.1
   share_plus: ^10.1.4
+  expandable_text: ^2.3.0
 
 dev_dependencies:
   flutter_test:

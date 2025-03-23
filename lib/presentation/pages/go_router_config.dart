@@ -9,8 +9,11 @@ import 'package:wajanja/presentation/pages/auth_pages/login_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/reset_password_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/signup_success_page.dart';
+import 'package:wajanja/presentation/pages/home_pages/audiobooks.dart';
 import 'package:wajanja/presentation/pages/home_pages/home.dart';
 import 'package:wajanja/presentation/pages/home_pages/home_page.dart';
+import 'package:wajanja/presentation/pages/home_pages/news.dart';
+import 'package:wajanja/presentation/pages/home_pages/podcasts.dart';
 import 'package:wajanja/presentation/pages/home_pages/video_description.dart';
 import 'package:wajanja/presentation/pages/onboarding_pages/onboarding.dart';
 import 'package:wajanja/utils/constants/enums.dart';
@@ -34,32 +37,58 @@ class AppRouterConfig {
             return Home(shell: navigationShell);
           },
           branches: [
-            // lodges
+            //* VIDEOS
             StatefulShellBranch(routes: [
               GoRoute(
-                name: AppRoutes.home.name,
-                path: "/${AppRoutes.home.path}",
-                builder: (context, state) {
-                  return HomePage();
-                },
-
-                routes: [
-                  GoRoute(
-                  name: AppRoutes.videoDescription.name,
-                  path: "video-description",
+                  name: AppRoutes.home.name,
+                  path: "/${AppRoutes.home.path}",
                   builder: (context, state) {
-                    final video = state.extra as Video;
-                    return VideoDescription(video: video);
-                  }),
-                ]
+                    return HomePage();
+                  },
+                  routes: [
+                    GoRoute(
+                        name: AppRoutes.videoDescription.name,
+                        path: "video-description",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final video = state.extra as Video;
+                          return VideoDescription(video: video);
+                        }),
+                  ]),
+            ]),
+
+            //* NEWS
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: AppRoutes.news.name,
+                path: "/${AppRoutes.news.path}",
+                builder: (context, state) {
+                  return NewsPage();
+                },
               ),
-            ])
+            ]),
 
-            // roommates
+            // * AUDIO BOOKS PAGE
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: AppRoutes.audiobooks.name,
+                path: "/${AppRoutes.audiobooks.path}",
+                builder: (context, state) {
+                  return AudiobooksPage();
+                },
+              ),
+            ]),
 
-            // services
-
-            // requests
+            //* PODCASTS PAGE
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: AppRoutes.podcasts.name,
+                path: "/${AppRoutes.podcasts.path}",
+                builder: (context, state) {
+                  return PodcastsPage();
+                },
+              ),
+            ]),
           ],
         ),
 

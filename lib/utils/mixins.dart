@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
+import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/my_dialog.dart';
+import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/presentation/widgets/spaced_column.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -18,9 +21,27 @@ mixin AuthMixin {
   }
 }
 
+mixin AppBarMixin {
+  PreferredSizeWidget buildAppBar(WidgetRef ref, {String? title}) {
+    final user = ref.watch(authNotifierProvider).user!;
+    return AppBar(
+      title: Text(title ?? "Videos"),
+      bottom: PreferredSize(preferredSize: Size(0, 10.h), child: Container()),
+      actions: [
+        ProfilePicture(user: user),
+        SizedBox(
+          width: 10.w,
+        )
+      ],
+    );
+  }
+}
+
 mixin ThemesMixin<T extends StatefulWidget> on State<T> {
   TextTheme get textTheme => Theme.of(context).textTheme;
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
+
+  bool get isDarkTheme => Theme.of(context).brightness == Brightness.dark;
 }
 
 mixin UrlMixin on UiInfoMixin {

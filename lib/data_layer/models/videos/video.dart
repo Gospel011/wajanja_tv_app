@@ -9,7 +9,7 @@ import 'package:wajanja/utils/constants/enums.dart';
 class Video {
   final String title;
   final String? description;
-  final String coverPhotoPortrait;
+  final String? coverPhotoPortrait;
   final String postedBy;
   final String? url;
   final String? youtubeUrl;
@@ -23,7 +23,7 @@ class Video {
   Video({
     required this.title,
     this.description,
-    required this.coverPhotoPortrait,
+    this.coverPhotoPortrait,
     required this.postedBy,
     this.url,
     this.youtubeUrl,
@@ -101,7 +101,7 @@ class Video {
     return Video(
       title: map['title'] as String,
       description: map['description'] as String?,
-      coverPhotoPortrait: map['coverPhotoPortrait'] as String,
+      coverPhotoPortrait: map['coverPhotoPortrait'] as String?,
       postedBy: map['postedBy'] as String,
       url: map['url'] as String?,
       youtubeUrl:

@@ -25,6 +25,7 @@ class AppThemes {
       outlineVariant: AppColors.gray500,
       surfaceTint: AppColors.yellowGreenLight,
       tertiaryFixed: AppColors.hintLight,
+      tertiaryFixedDim: AppColors.gray700,
     ),
     useMaterial3: false,
 
@@ -195,6 +196,7 @@ class AppThemes {
       outlineVariant: AppColors.gray500Light,
       surfaceTint: AppColors.yellowGreenLight,
       tertiaryFixed: AppColors.hintLight, 
+      tertiaryFixedDim: AppColors.gray500,
     ),
     useMaterial3: false,
 

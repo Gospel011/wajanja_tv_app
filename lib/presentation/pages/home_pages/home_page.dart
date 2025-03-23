@@ -13,6 +13,7 @@ import 'package:wajanja/presentation/widgets/video_widget.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
+import 'package:wajanja/utils/mixins.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({
@@ -23,7 +24,7 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
   // models.User? user;
   @override
   void initState() {
@@ -61,16 +62,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Videos"),
-        bottom: PreferredSize(preferredSize: Size(0, 10.h), child: Container()),
-        actions: [
-          ProfilePicture(user: user),
-          SizedBox(
-            width: 10.w,
-          )
-        ],
-      ),
+      appBar: buildAppBar(ref, title: "Videos"),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
