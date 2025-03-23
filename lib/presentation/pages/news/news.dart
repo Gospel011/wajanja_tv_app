@@ -37,6 +37,7 @@ class _NewsPageState extends ConsumerState<NewsPage>
       appBar: buildAppBar(ref, title: "News"),
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(child: SizedBox(height: 32.h,)),
           SliverList.builder(
             itemBuilder: (context, index) {
               final news = sampleNews.elementAt(index);
@@ -49,7 +50,7 @@ class _NewsPageState extends ConsumerState<NewsPage>
                     extra: news,
                   );
                 },
-              );
+              ).pOnly(bottom: 20.h);
             },
             itemCount: sampleNews.length,
           ).spSymmetric()
