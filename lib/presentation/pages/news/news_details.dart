@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,7 @@ import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/engagementButtons.dart';
+import 'package:wajanja/presentation/widgets/image_overflow.dart';
 import 'package:wajanja/presentation/widgets/image_place_holder_widget.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/profile_picture.dart';
@@ -49,15 +51,6 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
           targetNews!.shortDate,
           style: textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
         ),
-        // actions: [
-        //   ProfilePicture(
-        //     user: postedBy,
-        //     // size: 32.r,
-        //   ),
-        //   SizedBox(
-        //     width: 10.w,
-        //   )
-        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -162,146 +155,241 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                     section.text!,
                     textAlign: TextAlign.justify,
                   );
-                // return SizedBox.shrink();
                 case NewsSectionType.pictures:
                   final imagesLength = section.images!.length;
-
-                  // final int axisCount = imagesLength == 1
-                  //     ? 1
-                  //     : imagesLength == 2
-                  //         ? 2
-                  //         : 4;
+                  final containerWidth =
+                      (MediaQuery.sizeOf(context).width - 16.w);
+                  final containerHeight = 300.r;
 
                   return Container(
-                    // color: Colors.red,
                     alignment: Alignment.center,
-                    height: 200.r,
+                    height: containerHeight,
+                    // color: Colors.red,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.r),
                       child: Center(
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate: SliverQuiltedGridDelegate(
-                            crossAxisCount: 4,
-                            // mainAxisSpacing: 4,
-                            // crossAxisSpacing: 4,
-                            repeatPattern: QuiltedGridRepeatPattern.inverted,
-                            pattern: imagesLength == 1
-                                ? [
-                                    QuiltedGridTile(1, 1),
-                                  ]
-                                : imagesLength == 2
-                                    ? [
-                                        QuiltedGridTile(1, 1),
-                                        QuiltedGridTile(1, 1),
-                                      ]
-                                    : imagesLength == 3
-                                        ? [
-                                            QuiltedGridTile(2, 4),
-                                            QuiltedGridTile(2, 2),
-                                            QuiltedGridTile(2, 2),
-                                          ]
-                                        : [
-                                            QuiltedGridTile(2, 2),
-                                            QuiltedGridTile(1, 1),
-                                            QuiltedGridTile(1, 1),
-                                            QuiltedGridTile(1, 1),
-                                          ],
-                          ),
-                          itemBuilder: (context, index) {
-                            // final random = Random(index);
+                        child: Table(
+                          children: imagesLength <= 2
+                              ? [
+                                  TableRow(
+                                      children: List<Widget>.generate(
+                                          imagesLength, (index) {
+                                    return MyImageWidget(
+                                      image: section.images!.elementAt(index),
+                                      borderRadius: 0,
+                                      size: containerHeight,
+                                      onTap: () {
+                                        context.pushNamed(
+                                          AppRoutes.imageView.name,
+                                          extra: ImageExtra(
+                                            images: section.images,
+                                            currentIndex: index,
+                                          ),
+                                        );
+                                      },
+                                      // boxfit: BoxFit.cover,
+                                    );
+                                  })),
+                                ]
+                              :
+                              // imagesLength == 3
+                              //     ?
+                              [
+                                  TableRow(
+                                    children: [
+                                      MyImageWidget(
+                                        image: section.images!.elementAt(0),
+                                        borderRadius: 0,
+                                        width: containerWidth * 0.5,
 
-                            // return Container(
-                            //   color: Color.fromARGB(
-                            //     255,
-                            //     random.nextInt(255),
-                            //     random.nextInt(255),
-                            //     random.nextInt(255),
-                            //   ),
-                            // );
+                                        height: containerHeight,
 
-                            if (index == 4) {
-                              return ImageOverflow(
-                                  overflow: imagesLength - 4,
-                                  onTap: () {
-                                    context.pushNamed(AppRoutes.imageView.name,
-                                        extra:
-                                            ImageExtra(images: section.images));
-                                  });
-                            }
-                            return MyImageWidget(
-                              image: section.images!.elementAt(index),
-                              borderRadius: 0,
-                              size: 500.r,
-                              onTap: () {
-                                context.pushNamed(
-                                  AppRoutes.imageView.name,
-                                  extra: ImageExtra(
-                                      images: section.images,
-                                      currentIndex: index),
-                                );
-                              },
-                              // boxfit: BoxFit.cover,
-                            );
-                          },
-                          itemCount: imagesLength >= 5 ? 5 : imagesLength,
-                          // itemBuilder: SliverChildBuilderDelegate(
-                          // (context, index) => MyImageWidget(
-                          //   image: section.images!.elementAt(index),
-                          //   borderRadius: 0,
-                          // ),
-                          // ),
+                                        // size: index == 2
+                                        //     ? containerWidth * 0.25
+                                        //     : null,
+
+                                        onTap: () {
+                                          context.pushNamed(
+                                            AppRoutes.imageView.name,
+                                            extra: ImageExtra(
+                                              images: section.images,
+                                              currentIndex: 0,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      Column(
+                                        children: [
+                                          MyImageWidget(
+                                            image: section.images!.elementAt(1),
+                                            borderRadius: 0,
+                                            width: containerWidth * 0.5,
+
+                                            height: containerHeight * 0.5,
+
+                                            // size: index == 2
+                                            //     ? containerWidth * 0.25
+                                            //     : null,
+
+                                            onTap: () {
+                                              context.pushNamed(
+                                                AppRoutes.imageView.name,
+                                                extra: ImageExtra(
+                                                  images: section.images,
+                                                  currentIndex: 1,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          if (imagesLength == 3)
+                                            MyImageWidget(
+                                              image:
+                                                  section.images!.elementAt(2),
+                                              borderRadius: 0,
+                                              width: containerWidth * 0.5,
+
+                                              height: containerHeight * 0.5,
+
+                                              // size: index == 2
+                                              //     ? containerWidth * 0.25
+                                              //     : null,
+
+                                              onTap: () {
+                                                context.pushNamed(
+                                                  AppRoutes.imageView.name,
+                                                  extra: ImageExtra(
+                                                    images: section.images,
+                                                    currentIndex: 2,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          if (imagesLength > 3)
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: MyImageWidget(
+                                                    image: section.images!
+                                                        .elementAt(2),
+                                                    borderRadius: 0,
+                                                    // width: containerWidth * 0.25,
+
+                                                    height:
+                                                        containerHeight * 0.5,
+
+                                                    // size: index == 2
+                                                    //     ? containerWidth * 0.25
+                                                    //     : null,
+
+                                                    onTap: () {
+                                                      context.pushNamed(
+                                                        AppRoutes
+                                                            .imageView.name,
+                                                        extra: ImageExtra(
+                                                          images:
+                                                              section.images,
+                                                          currentIndex: 2,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: ImageOverflow(
+                                                    overflow: imagesLength - 3,
+                                                    height: containerHeight * 0.5,
+                                                  ),
+                                                )
+
+                                                // Expanded(
+                                                //   child: Container(
+                                                //     // width: 50.r,
+                                                //     height: 100.r,
+                                                //     color: Colors.blue,
+                                                //   ),
+                                                // )
+                                              ],
+                                            )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                          // : [],
                         ),
+                        // child: GridView.builder(
+                        //   physics: const NeverScrollableScrollPhysics(),
+                        //   shrinkWrap: true,
+                        //   gridDelegate: SliverQuiltedGridDelegate(
+                        //     crossAxisCount: 4,
+                        //     repeatPattern: QuiltedGridRepeatPattern.inverted,
+                        //     pattern: imagesLength == 1
+                        //         ? [
+                        //             QuiltedGridTile(4, 4),
+                        //           ]
+                        //         : imagesLength == 2
+                        //             ? [
+                        //                 QuiltedGridTile(2, 2),
+                        //                 QuiltedGridTile(2, 2),
+                        //               ]
+                        //             : imagesLength == 3
+                        //                 ? [
+                        //                     QuiltedGridTile(2, 4),
+                        //                     QuiltedGridTile(2, 2),
+                        //                     QuiltedGridTile(2, 2),
+                        //                   ]
+                        //                 : [
+                        //                     QuiltedGridTile(2, 2),
+                        //                     QuiltedGridTile(1, 1),
+                        //                     QuiltedGridTile(1, 1),
+                        //                     QuiltedGridTile(1, 1),
+                        //                   ],
+                        //   ),
+                        //   itemBuilder: (context, index) {
+                        //     // final random = Random(index);
+
+                        //     // return Container(
+                        //     //   color: Color.fromARGB(
+                        //     //     255,
+                        //     //     random.nextInt(255),
+                        //     //     random.nextInt(255),
+                        //     //     random.nextInt(255),
+                        //     //   ),
+                        //     // );
+
+                        //     if (index == 4) {
+                        //       return ImageOverflow(
+                        //           overflow: imagesLength - 4,
+                        //           onTap: () {
+                        //             context.pushNamed(AppRoutes.imageView.name,
+                        //                 extra:
+                        //                     ImageExtra(images: section.images));
+                        //           });
+                        //     }
+                        // return MyImageWidget(
+                        //   image: section.images!.elementAt(index),
+                        //   borderRadius: 0,
+                        //   size: 500.r,
+                        //   onTap: () {
+                        //     context.pushNamed(
+                        //       AppRoutes.imageView.name,
+                        //       extra: ImageExtra(
+                        //           images: section.images,
+                        //           currentIndex: index),
+                        //     );
+                        //   },
+                        //   // boxfit: BoxFit.cover,
+                        // );
+                        //   },
+                        //   itemCount: imagesLength >= 5 ? 5 : imagesLength,
+                        // ),
                       ),
                     ),
                   ).pSymmetric(horizontal: 0, vertical: 20.h);
-                // return ImageLoadingPlaceHolderWidget(
-                //   placeHolderText: "${section.images!.length} images here",
-                // );
-                // default:
-                //   return Text('unknow section');
               }
             })
           ],
         ).pSymmetric(),
-      ),
-    );
-  }
-}
-
-class ImageOverflow extends StatelessWidget with StatelessThemesMixin {
-  const ImageOverflow({
-    super.key,
-    required this.overflow,
-    this.onTap,
-  });
-
-  final int overflow;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        // color: colorScheme.tertiaryFixed,
-        color: isDarkTheme(context)
-            ? colorScheme(context).surfaceTint.withValues(alpha: 0.1)
-            : colorScheme(context).tertiaryFixed.withValues(alpha: 0.1),
-        child: Container(
-          padding: EdgeInsets.all(16.r),
-          decoration: BoxDecoration(
-              // color: colorScheme.surfaceTint.withValues(alpha: 0.1),
-              shape: BoxShape.circle),
-          child: Text(
-            "+$overflow",
-            style: textTheme(context)
-                .titleMedium
-                ?.copyWith(color: colorScheme(context).onSurface),
-          ),
-        ),
       ),
     );
   }

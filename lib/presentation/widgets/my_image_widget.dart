@@ -16,6 +16,8 @@ class MyImageWidget extends StatelessWidget {
     this.errorWidget,
     this.placeHolder,
     this.size,
+    this.width,
+    this.height,
     this.boxfit = BoxFit.cover,
   });
 
@@ -24,6 +26,8 @@ class MyImageWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   final double? size;
+  final double? width;
+  final double? height;
 
   final String? image;
   final File? file;
@@ -40,8 +44,8 @@ class MyImageWidget extends StatelessWidget {
             ? Image.file(
                 io.File(file!.path),
                 fit: boxfit,
-                width: size,
-                height: size,
+                width: width ?? size,
+                height: height ?? size,
                 // frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
                 //     const ImageLoadingPlaceHolderWidget().shimmer(),
                 errorBuilder: (context, error, stacktrace) =>
@@ -50,8 +54,8 @@ class MyImageWidget extends StatelessWidget {
             : CachedNetworkImage(
                 imageUrl: image!,
                 fit: boxfit,
-                width: size,
-                height: size,
+                width: width ?? size,
+                height: height ?? size,
                 placeholder: (context, url) =>
                     placeHolder ??
                     const ImageLoadingPlaceHolderWidget().shimmer(),
