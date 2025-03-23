@@ -143,6 +143,7 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                       borderRadius: BorderRadius.circular(8.r),
                       child: Center(
                         child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           gridDelegate: SliverQuiltedGridDelegate(
                             crossAxisCount: 4,
