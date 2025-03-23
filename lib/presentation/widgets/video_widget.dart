@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/utils/constants/app_colors.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';

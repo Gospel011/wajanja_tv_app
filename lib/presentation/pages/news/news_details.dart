@@ -1,10 +1,7 @@
-import 'dart:math';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/models/helper_models/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
@@ -12,7 +9,6 @@ import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/engagementButtons.dart';
 import 'package:wajanja/presentation/widgets/image_overflow.dart';
-import 'package:wajanja/presentation/widgets/image_place_holder_widget.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/utils/constants/enums.dart';

@@ -8,7 +8,6 @@ import 'package:wajanja/data_layer/providers/user_provider/user_provider.dart';
 import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
 // import 'package:wajanja/my_tests/sample_video_model.dart';
-import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/presentation/widgets/video_widget.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
