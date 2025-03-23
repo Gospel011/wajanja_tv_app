@@ -40,20 +40,21 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
+        bottom: PreferredSize(preferredSize: Size(0, 10.h), child: Container()),
         centerTitle: true,
         title: Text(
           targetNews!.shortDate,
           style: textTheme.bodySmall?.copyWith(color: colorScheme.tertiary),
         ),
-        actions: [
-          ProfilePicture(
-            user: postedBy,
-            size: 32.w,
-          ),
-          SizedBox(
-            width: 10.w,
-          )
-        ],
+        // actions: [
+        //   ProfilePicture(
+        //     user: postedBy,
+        //     // size: 32.r,
+        //   ),
+        //   SizedBox(
+        //     width: 10.w,
+        //   )
+        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -66,6 +67,29 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
               style: textTheme.headlineMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10.w,
+              children: [
+                ProfilePicture(user: postedBy),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 8.h,
+                  children: [
+                    Text(
+                      postedBy.fullName!,
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: colorScheme.tertiaryFixedDim, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      widget.news.shortDate,
+                      style: textTheme.bodySmall
+                          ?.copyWith(color: colorScheme.tertiaryFixedDim),
+                    )
+                  ],
+                )
+              ],
+            ).pSymmetric(horizontal: 0, vertical: 16.h),
             Builder(builder: (context) {
               final liked = targetNews!.likes.contains(postedBy.email);
               final disliked = targetNews!.dislikes.contains(postedBy.email);
@@ -124,7 +148,10 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
 
               switch (section.sectionType) {
                 case NewsSectionType.text:
-                  return Text(section.text!, textAlign: TextAlign.justify,);
+                  return Text(
+                    section.text!,
+                    textAlign: TextAlign.justify,
+                  );
                 // return SizedBox.shrink();
                 case NewsSectionType.pictures:
                   final imagesLength = section.images!.length;
@@ -169,12 +196,12 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                                             QuiltedGridTile(2, 2),
                                             QuiltedGridTile(1, 1),
                                             QuiltedGridTile(1, 1),
-                                            QuiltedGridTile(1, 2),
+                                            QuiltedGridTile(1, 1),
                                           ],
                           ),
                           itemBuilder: (context, index) {
                             final random = Random(index);
-                      
+
                             // return Container(
                             //   color: Color.fromARGB(
                             //     255,
@@ -183,6 +210,29 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                             //     random.nextInt(255),
                             //   ),
                             // );
+
+                            if (index == 4) {
+                              return Container(
+                                alignment: Alignment.center,
+                                // color: colorScheme.tertiaryFixed,
+                                color: isDarkTheme
+                                    ? colorScheme.surfaceTint
+                                        .withValues(alpha: 0.1)
+                                    : colorScheme.tertiaryFixed
+                                        .withValues(alpha: 0.1),
+                                child: Container(
+                                  padding: EdgeInsets.all(16.r),
+                                  decoration: BoxDecoration(
+                                      // color: colorScheme.surfaceTint.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle),
+                                  child: Text(
+                                    "+${imagesLength - 4}",
+                                    style: textTheme.titleMedium?.copyWith(
+                                        color: colorScheme.onSurface),
+                                  ),
+                                ),
+                              );
+                            }
                             return MyImageWidget(
                               image: section.images!.elementAt(index),
                               borderRadius: 0,
@@ -190,7 +240,7 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                               // boxfit: BoxFit.cover,
                             );
                           },
-                          itemCount: imagesLength > 5 ? 4 : imagesLength,
+                          itemCount: imagesLength >= 5 ? 5 : imagesLength,
                           // itemBuilder: SliverChildBuilderDelegate(
                           // (context, index) => MyImageWidget(
                           //   image: section.images!.elementAt(index),
