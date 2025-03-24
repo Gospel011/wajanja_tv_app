@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
+import 'package:wajanja/utils/mixins.dart';
 
-class ProfilePicture extends StatelessWidget {
+class ProfilePicture extends StatelessWidget with StatelessThemesMixin {
   const ProfilePicture({super.key, required this.user, this.size});
 
   final User? user;
@@ -21,12 +22,20 @@ class ProfilePicture extends StatelessWidget {
           width: size ?? 50.r,
           errorWidget: (context, url, error) {
             return Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.onSurface)),
-                child: Text(user?.initials ?? ''));
+              alignment: Alignment.center,
+              width: size ?? 50.r,
+              height: size ?? 50.r,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface)),
+              child: Text(
+                user?.initials ?? '',
+                style: (size ?? 50.r) < 20.r
+                    ? textTheme(context).bodySmall
+                    : textTheme(context).titleLarge,
+              ),
+            );
           },
         ),
       );

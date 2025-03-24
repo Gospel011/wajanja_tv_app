@@ -17,6 +17,7 @@ import 'package:wajanja/presentation/pages/auth_pages/signup_success_page.dart';
 import 'package:wajanja/presentation/pages/audiobooks/audiobooks.dart';
 import 'package:wajanja/presentation/pages/news/news_details.dart';
 import 'package:wajanja/presentation/pages/profile/profile.dart';
+import 'package:wajanja/presentation/pages/settings/settings_page.dart';
 import 'package:wajanja/presentation/pages/utility_pages/image_view_page.dart';
 import 'package:wajanja/presentation/pages/videos/home.dart';
 import 'package:wajanja/presentation/pages/videos/home_page.dart';
@@ -127,6 +128,13 @@ class AppRouterConfig {
             path: "/${AppRoutes.profile.path}",
             builder: (context, state) {
               return const ProfilePage();
+            }),
+
+        GoRoute(
+            name: AppRoutes.settings.name,
+            path: "/${AppRoutes.settings.path}",
+            builder: (context, state) {
+              return const SettingsPage();
             }),
 
         //? IMAGE VIEW PAGE

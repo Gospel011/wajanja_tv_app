@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
+import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart';
+import 'package:wajanja/data_layer/providers/theme_provider/theme_state.dart';
 import 'package:wajanja/firebase_options.dart';
 import 'package:wajanja/presentation/pages/go_router_config.dart';
 import 'package:wajanja/utils/themes/themes.dart';
@@ -17,6 +19,9 @@ void main() async {
   await Hive.initFlutter();
 
   Hive.registerAdapter(UserAdapter());
+  // Hive.registerAdapter(ThemeStateAdapter());
+
+  await Hive.openBox<String>('themes');
 
   await UserDb.instance.init();
 
@@ -57,6 +62,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       minTextAdapt: true,
       child: Builder(
         builder: (context) {
+          final theme = ref.watch(themeProvider);
           return MaterialApp.router(
             title: 'Wajanja Tv',
             debugShowCheckedModeBanner: false,
@@ -66,7 +72,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                 child: child!,
               );
             },
-            themeMode: ThemeMode.system,
+            themeMode: theme.themeMode,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
             routerConfig: router,

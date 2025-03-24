@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/utils/constants/enums.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 part 'user_state.dart';
 
 class UserNotifier extends Notifier<UserState> {
@@ -22,6 +23,7 @@ class UserNotifier extends Notifier<UserState> {
     state = state.copyWith(state: UserStates.upsertingUser);
 
     try {
+      log.f("MAKING REQUEST: ${user.userName != null}");
       if (user.userName != null) {
         final response = await usersRef
             .where(
@@ -31,21 +33,28 @@ class UserNotifier extends Notifier<UserState> {
             .limit(1)
             .get();
 
+        log.f("RESPONSE IS NOT EMPTY: ${response.docs.isNotEmpty}");
+
         if (response.docs.isNotEmpty) {
           final userDoc = response.docs.first.data();
 
-          if (userDoc.email == user.email) {
+          log.f("USER DOC: $userDoc");
+          log.f("USER TO UPDATE DOC: $user");
+
+          if (userDoc.email != user.email) {
             state = state.copyWith(
               state: UserStates.upsertingUserFailed,
               error: AppError(
                   title: "Username not available",
                   content:
-                      "${user.userName} is already chosen, please choose another username"),
+                      "${user.userName} is already chosen by another user, please choose another username."),
             );
             return;
           }
         }
       }
+
+      // return;
       await usersRef.doc(user.email!).set(user, SetOptions(merge: true));
       state = state.copyWith(
         state: UserStates.userUpserted,

@@ -129,7 +129,7 @@ enum AppRoutes {
   podcasts,
   newsDetails,
   imageView,
-  audiobooksDetail, profile;
+  audiobooksDetail, profile, settings;
 
   String get path => name.kebabCase;
 }
@@ -560,4 +560,4 @@ enum PodcastGenre {
   }
 }
 
-enum HomeActions { view_profile, logout }
+enum HomeActions { view_profile, logout, settings }

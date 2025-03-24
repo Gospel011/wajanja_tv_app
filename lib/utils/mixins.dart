@@ -57,7 +57,7 @@ mixin AppBarMixin {
         PopupMenuButton(
             offset: Offset(-50.r, 50.r),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r)),
+                borderRadius: BorderRadius.circular(16.r)),
             onSelected: (value) {
               switch (value) {
                 case HomeActions.logout:
@@ -66,18 +66,37 @@ mixin AppBarMixin {
                   break;
                 case HomeActions.view_profile:
                   context.pushNamed(AppRoutes.profile.name);
+                case HomeActions.settings:
+                  context.pushNamed(AppRoutes.settings.name);
               }
             },
             itemBuilder: (context) => [
                   PopupMenuItem(
                       value: HomeActions.view_profile,
-                      child: ListTile(
-                        title: Text("View profile"),
+                      child: Row(
+                        spacing: 10.w,
+                        children: [
+                          Icon(Icons.person_rounded),
+                          Text("View profile"),
+                        ],
+                      )),
+                  PopupMenuItem(
+                      value: HomeActions.settings,
+                      child: Row(
+                        spacing: 10.w,
+                        children: [
+                          Icon(Icons.settings),
+                          Text("Settings"),
+                        ],
                       )),
                   PopupMenuItem(
                       value: HomeActions.logout,
-                      child: ListTile(
-                        title: Text("Logout"),
+                      child: Row(
+                        spacing: 10.w,
+                        children: [
+                          Icon(Icons.logout),
+                          Text("Logout"),
+                        ],
                       )),
                 ],
             child: ProfilePicture(user: user)),

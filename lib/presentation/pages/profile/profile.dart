@@ -82,6 +82,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
     );
 
     return Scaffold(
+      appBar: AppBar(),
       bottomNavigationBar: Builder(builder: (context) {
         return MyElevatedButton(
           text: "Save",
