@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
+import 'package:wajanja/utils/mixins.dart';
 
-class MyElevatedButton extends StatelessWidget {
+class MyElevatedButton extends StatelessWidget with StatelessThemesMixin {
   final String text;
   final bool? loading;
   final MainAxisSize mainAxisSize;
@@ -55,10 +56,10 @@ class MyElevatedButton extends StatelessWidget {
               const SizedBox(width: 0),
             loading != true
                 ? Text(text, style: textStyle)
-                : const Center(
+                :  Center(
                     // height: 24,
                     // width: 24,
-                    child: MyLoadingWidget(),
+                    child: MyLoadingWidget(color: colorScheme(context).surface,),
                   ),
             if (icon != null) Icon(icon) else const SizedBox(width: 0),
           ],

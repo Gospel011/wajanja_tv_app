@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:hive_flutter/hive_flutter.dart';
+
 part 'user.g.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
@@ -21,6 +22,8 @@ class User {
   final String? photoURL;
   @HiveField(5)
   final bool emailVerified;
+  @HiveField(6)
+  final String? userName;
   // @HiveField(6)
   // late Timestamp createdAt;
   User({
@@ -29,6 +32,7 @@ class User {
     this.phone,
     this.country,
     this.photoURL,
+    this.userName,
     this.emailVerified = false,
     // Timestamp? createdAt,
   }) {
@@ -64,6 +68,7 @@ class User {
     String? phone,
     String? country,
     String? photoURL,
+    String? userName,
     bool? emailVerified,
   }) {
     return User(
@@ -71,6 +76,7 @@ class User {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       country: country ?? this.country,
+      userName: userName ?? this.userName,
       photoURL: photoURL ?? this.photoURL,
       emailVerified: emailVerified ?? this.emailVerified,
     );
@@ -84,6 +90,7 @@ class User {
       'country': country,
       'photoURL': photoURL,
       'emailVerified': emailVerified,
+      'userName': userName,
       // 'createdAt': createdAt
     };
   }
@@ -96,6 +103,7 @@ class User {
       country: map['country'] != null ? map['country'] as String : null,
       photoURL: map['photoURL'] != null ? map['photoURL'] as String : null,
       emailVerified: (map['emailVerified'] ?? false) as bool,
+      userName: map['userName'] as String?
     );
   }
 
@@ -106,6 +114,31 @@ class User {
 
   @override
   String toString() {
-    return 'User(fullName: $fullName, email: $email, phone: $phone, country: $country, photoURL: $photoURL, emailVerified: $emailVerified)';
+    return 'User(fullName: $fullName, email: $email, phone: $phone, country: $country, photoURL: $photoURL, emailVerified: $emailVerified, userName: $userName)';
+  }
+
+  @override
+  bool operator ==(covariant User other) {
+    if (identical(this, other)) return true;
+  
+    return 
+      other.fullName == fullName &&
+      other.email == email &&
+      other.phone == phone &&
+      other.country == country &&
+      other.photoURL == photoURL &&
+      other.emailVerified == emailVerified &&
+      other.userName == userName;
+  }
+
+  @override
+  int get hashCode {
+    return fullName.hashCode ^
+      email.hashCode ^
+      phone.hashCode ^
+      country.hashCode ^
+      photoURL.hashCode ^
+      emailVerified.hashCode ^
+      userName.hashCode;
   }
 }

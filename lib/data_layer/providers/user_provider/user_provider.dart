@@ -20,9 +20,37 @@ class UserNotifier extends Notifier<UserState> {
 
   Future<void> upsertUser(User user) async {
     state = state.copyWith(state: UserStates.upsertingUser);
+
     try {
+      if (user.userName != null) {
+        final response = await usersRef
+            .where(
+              "userName",
+              isEqualTo: user.userName ?? '',
+            )
+            .limit(1)
+            .get();
+
+        if (response.docs.isNotEmpty) {
+          final userDoc = response.docs.first.data();
+
+          if (userDoc.email == user.email) {
+            state = state.copyWith(
+              state: UserStates.upsertingUserFailed,
+              error: AppError(
+                  title: "Username not available",
+                  content:
+                      "${user.userName} is already chosen, please choose another username"),
+            );
+            return;
+          }
+        }
+      }
       await usersRef.doc(user.email!).set(user, SetOptions(merge: true));
-      state = state.copyWith(state: UserStates.userUpserted);
+      state = state.copyWith(
+        state: UserStates.userUpserted,
+        user: user,
+      );
     } catch (e) {
       state = state.copyWith(
           state: UserStates.upsertingUserFailed,

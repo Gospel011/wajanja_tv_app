@@ -10,7 +10,7 @@ class MyLoadingWidget extends StatelessWidget with StatelessThemesMixin{
   @override
   Widget build(BuildContext context) {
     return SpinKitThreeBounce(
-      color: colorScheme(context).primary,
+      color: color ?? colorScheme(context).primary,
       size: size ?? 24,
     );
   }

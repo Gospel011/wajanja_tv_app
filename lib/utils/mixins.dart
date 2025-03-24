@@ -45,13 +45,42 @@ mixin TimerMixin {
 }
 
 mixin AppBarMixin {
-  PreferredSizeWidget buildAppBar(WidgetRef ref, {String? title}) {
-    final user = ref.watch(authNotifierProvider).user!;
+  PreferredSizeWidget buildAppBar(BuildContext context,
+      {required WidgetRef ref, String? title}) {
+    final user = ref.watch(authNotifierProvider).user;
     return AppBar(
       title: Text(title ?? "Videos"),
       bottom: PreferredSize(preferredSize: Size(0, 10.h), child: Container()),
       actions: [
-        ProfilePicture(user: user),
+        // ProfilePicture(user: user),
+
+        PopupMenuButton(
+            offset: Offset(-50.r, 50.r),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r)),
+            onSelected: (value) {
+              switch (value) {
+                case HomeActions.logout:
+                  ref.read(authNotifierProvider.notifier).logout();
+
+                  break;
+                case HomeActions.view_profile:
+                  context.pushNamed(AppRoutes.profile.name);
+              }
+            },
+            itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: HomeActions.view_profile,
+                      child: ListTile(
+                        title: Text("View profile"),
+                      )),
+                  PopupMenuItem(
+                      value: HomeActions.logout,
+                      child: ListTile(
+                        title: Text("Logout"),
+                      )),
+                ],
+            child: ProfilePicture(user: user)),
         SizedBox(
           width: 10.w,
         )

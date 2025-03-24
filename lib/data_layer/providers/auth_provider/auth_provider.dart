@@ -22,7 +22,8 @@ class AuthNotifier extends Notifier<AuthState> {
 
     log.i("NEW USER STATE: $userState");
 
-    if (userState?.state == UserStates.userFetched) {
+    if (userState?.state == UserStates.userFetched ||
+        userState?.state == UserStates.userUpserted) {
       user = userState!.user!;
       UserDb.instance.save(user);
     }
@@ -231,16 +232,16 @@ class AuthNotifier extends Notifier<AuthState> {
       await userNotifier!.upsertUser(newUser);
       await userNotifier!.fetchUser(newUser.email!);
 
-      if (userState?.state == UserStates.userFetched) {
-        newUser = userState!.user!;
-      }
+      // if (userState?.state == UserStates.userFetched) {
+      //   newUser = userState!.user!;
+      // }
 
-      UserDb.instance.save(newUser);
+      // UserDb.instance.save(newUser);
 
       _setState(
         state.copyWith(
           states: AuthStates.signingInWithGoogleSuccessful,
-          user: newUser,
+          // user: newUser,
         ),
       );
     } on FirebaseAuthException catch (e) {

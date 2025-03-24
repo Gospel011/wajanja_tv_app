@@ -30,7 +30,7 @@ class _NewsPageState extends ConsumerState<NewsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(ref, title: "News"),
+      appBar: buildAppBar(context, ref: ref, title: "News"),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: SizedBox(height: 32.h,)),

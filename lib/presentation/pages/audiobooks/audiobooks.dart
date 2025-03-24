@@ -17,7 +17,7 @@ class _AudiobooksPageState extends ConsumerState<AudiobooksPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(ref, title: "Audio books"),
+      appBar: buildAppBar(context, ref: ref, title: "Audio books"),
       body: CustomScrollView(
         slivers: [
           AudiobooksGrid(audiobooks: audiobooks).spSymmetric(),

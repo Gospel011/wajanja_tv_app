@@ -129,7 +129,7 @@ enum AppRoutes {
   podcasts,
   newsDetails,
   imageView,
-  audiobooksDetail;
+  audiobooksDetail, profile;
 
   String get path => name.kebabCase;
 }
@@ -543,7 +543,10 @@ enum PodcastGenre {
   celebrity_interviews,
   satire,
   daily_news,
-  economics_news, slavery, politics_and_social_sciences, muslim;
+  economics_news,
+  slavery,
+  politics_and_social_sciences,
+  muslim;
 
   String get describe => name.split('_').join(' ');
 
@@ -556,3 +559,5 @@ enum PodcastGenre {
     );
   }
 }
+
+enum HomeActions { view_profile, logout }

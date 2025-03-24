@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,21 +27,30 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
   // models.User? user;
+  late final StreamSubscription<User?> subscription;
   @override
   void initState() {
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   user = ref.read(authNotifierProvider).user!;
     // });
-    FirebaseAuth.instance.authStateChanges().listen(
+    subscription = FirebaseAuth.instance.authStateChanges().listen(
       (user) {
         if (user == null) {
           log.d("AUTH STATE CHANGES: $user");
+
+          // if (!mounted) return;
 
           ref.read(authNotifierProvider.notifier).logout();
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -54,6 +65,7 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
       log.i("STATE: $next");
       switch (next.states) {
         case AuthStates.initial:
+          if (next.user != null) return;
           context.goNamed(AppRoutes.login.name);
           break;
         default:
@@ -61,7 +73,7 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
     });
 
     return Scaffold(
-      appBar: buildAppBar(ref, title: "Videos"),
+      appBar: buildAppBar(context, ref: ref, title: "Videos"),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

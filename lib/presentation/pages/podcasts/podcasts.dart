@@ -72,7 +72,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
     log.f("PODCASTS BUILD METHOD CALLED");
 
     return Scaffold(
-      appBar: buildAppBar(ref, title: "Podcasts"),
+      appBar: buildAppBar(context, ref: ref, title: "Podcasts"),
       body: CustomScrollView(
         slivers: [
           SliverList.builder(
