@@ -59,6 +59,7 @@ dependencies:
   share_plus: ^10.1.4
   expandable_text: ^2.3.0
   intl: ^0.20.2
+  just_audio: ^0.9.46
 
 dev_dependencies:
   flutter_test:

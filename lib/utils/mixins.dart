@@ -21,6 +21,20 @@ mixin AuthMixin {
   }
 }
 
+mixin TimerMixin {
+  String ascendingTimerMixin(Duration currentDuration) {
+    final duration = currentDuration.inSeconds;
+
+    return "${(duration / 60).floor().toString().padLeft(2, "0")}:${(duration % 60).toString().padLeft(2, "0")}";
+  }
+
+  String descendingTimerMixin(Duration currentDuration, Duration fullDuration) {
+    final duration = fullDuration.inSeconds - currentDuration.inSeconds;
+
+    return "${(duration / 60).floor().toString().padLeft(2, "0")}:${(duration % 60).toString().padLeft(2, "0")}";
+  }
+}
+
 mixin AppBarMixin {
   PreferredSizeWidget buildAppBar(WidgetRef ref, {String? title}) {
     final user = ref.watch(authNotifierProvider).user!;

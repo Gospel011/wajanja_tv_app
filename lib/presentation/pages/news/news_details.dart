@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wajanja/data_layer/models/helper_models/image_extra.dart';
+import 'package:wajanja/data_layer/models/extras/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
@@ -293,7 +292,17 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                                                 Expanded(
                                                   child: ImageOverflow(
                                                     overflow: imagesLength - 3,
-                                                    height: containerHeight * 0.5,
+                                                    height:
+                                                        containerHeight * 0.5,
+                                                    onTap: () {
+                                                      context.pushNamed(
+                                                          AppRoutes
+                                                              .imageView.name,
+                                                          extra: ImageExtra(
+                                                            images:
+                                                                section.images,
+                                                          ));
+                                                    },
                                                   ),
                                                 )
 

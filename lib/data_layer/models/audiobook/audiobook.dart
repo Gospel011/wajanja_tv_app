@@ -11,8 +11,10 @@ class Audiobook {
   final String title;
   final String? description;
   final double averageRating;
-  final Timestamp createdAt;
+  final List<String> likes;
+  final List<String> dislikes;
   final List<AudiobookChapter> chapters;
+  final Timestamp createdAt;
   Audiobook({
     required this.coverphoto,
     required this.postedBy,
@@ -21,7 +23,11 @@ class Audiobook {
     this.description,
     required this.createdAt,
     required this.chapters,
+    required this.likes,
+    required this.dislikes,
   });
+
+  
 
   Audiobook copyWith({
     String? coverphoto,
@@ -31,6 +37,8 @@ class Audiobook {
     double? averageRating,
     Timestamp? createdAt,
     List<AudiobookChapter>? chapters,
+    List<String>? likes,
+    List<String>? dislikes,
   }) {
     return Audiobook(
       coverphoto: coverphoto ?? this.coverphoto,
@@ -40,6 +48,8 @@ class Audiobook {
       averageRating: averageRating ?? this.averageRating,
       createdAt: createdAt ?? this.createdAt,
       chapters: chapters ?? this.chapters,
+      likes: likes ?? this.likes,
+      dislikes: dislikes ?? this.dislikes,
     );
   }
 
@@ -52,6 +62,8 @@ class Audiobook {
       'averageRating': averageRating,
       'createdAt': createdAt.toDate().toIso8601String(),
       'chapters': chapters.map((x) => x.toMap()).toList(),
+      'likes': likes,
+      'dislikes': dislikes,
     };
   }
 
@@ -62,6 +74,8 @@ class Audiobook {
       title: map['title'] as String,
       description: map['description'] as String?,
       averageRating: map['averageRating'] as double,
+      likes: List<String>.from((map['likes'] as List<dynamic>)),
+      dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
       createdAt: Timestamp.fromDate(DateTime.parse(map['createdAt'] as String)),
       chapters: List<AudiobookChapter>.from(
         (map['chapters'] as List<dynamic>).map<AudiobookChapter>(
@@ -78,6 +92,6 @@ class Audiobook {
 
   @override
   String toString() {
-    return 'Audiobook(coverphoto: $coverphoto, postedBy: $postedBy, title: $title, averageRating: $averageRating, createdAt: $createdAt, chapters: $chapters)';
+    return 'Audiobook(coverphoto: $coverphoto, postedBy: $postedBy, title: $title, description: $description, averageRating: $averageRating, likes: $likes, dislikes: $dislikes, chapters: $chapters, createdAt: $createdAt)';
   }
 }

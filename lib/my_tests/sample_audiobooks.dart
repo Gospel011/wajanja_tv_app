@@ -10,6 +10,8 @@ final audiobooks = [
     title: "THE HOBBIT",
     averageRating: 0.0,
     createdAt: Timestamp.fromDate(DateTime.now()),
+    likes: [],
+    dislikes: [],
     description:
         """A great fantasy classic by J.R.R. Tolkien and the prelude to "The Lord of the Rings,"  our protagonist Bilbo Baggins is a Hobbit who enjoys a quiet and comfortable life, never traveling any farther than his own kitchen. But his contentment is disturbed when the Wizard Gandalf and a company of Dwarves arrive at his Hobbit home one day to take him away on an adventure. They have launched a plot to attack the treasure guarded by Smaug the Magnificent, a large and very dangerous dragon. Bilbo reluctantly joins their quest, not knowing that on his journey to the Lonely Mountain he will encounter both a magic ring and a frightening creature known as Gollum.
 

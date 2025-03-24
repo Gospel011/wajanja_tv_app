@@ -13,6 +13,8 @@ class AudiobookChapter {
     required this.duration,
   });
 
+  Duration get fullDuration => Duration(seconds: duration);
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'title': title,
@@ -33,8 +35,10 @@ class AudiobookChapter {
 
   String toJson() => json.encode(toMap());
 
-  factory AudiobookChapter.fromJson(String source) => AudiobookChapter.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AudiobookChapter.fromJson(String source) =>
+      AudiobookChapter.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'AudiobookChapter(title: $title, url: $url, duration: $duration)';
+  String toString() =>
+      'AudiobookChapter(title: $title, url: $url, duration: $duration)';
 }

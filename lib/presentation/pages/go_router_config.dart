@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wajanja/data_layer/models/helper_models/image_extra.dart';
+import 'package:wajanja/data_layer/models/extras/audiobook_extra.dart';
+import 'package:wajanja/data_layer/models/extras/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/my_tests/sample_news.dart';
+import 'package:wajanja/presentation/pages/audiobooks/audiobook_detail.dart';
 import 'package:wajanja/presentation/pages/auth_pages/email_verification_page.dart';
 import 'package:wajanja/presentation/pages/auth_pages/forgot_password_page%20copy.dart';
 import 'package:wajanja/presentation/pages/auth_pages/login_page.dart';
@@ -87,12 +89,23 @@ class AppRouterConfig {
             // * AUDIO BOOKS PAGE
             StatefulShellBranch(routes: [
               GoRoute(
-                name: AppRoutes.audiobooks.name,
-                path: "/${AppRoutes.audiobooks.path}",
-                builder: (context, state) {
-                  return AudiobooksPage();
-                },
-              ),
+                  name: AppRoutes.audiobooks.name,
+                  path: "/${AppRoutes.audiobooks.path}",
+                  builder: (context, state) {
+                    return AudiobooksPage();
+                  },
+                  routes: [
+                    GoRoute(
+                        name: AppRoutes.audiobooksDetail.name,
+                        path: AppRoutes.audiobooksDetail.path,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final extra = state.extra as AudiobookExtra;
+                          return AudiobookDetail(
+                            audiobook: extra.audiobook!,
+                          );
+                        }),
+                  ]),
             ]),
 
             //* PODCASTS PAGE
