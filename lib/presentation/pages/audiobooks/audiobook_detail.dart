@@ -6,8 +6,11 @@ import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
+import 'package:wajanja/presentation/widgets/audiobook_chapter_tile.dart';
+import 'package:wajanja/presentation/widgets/audiobook_cover.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
+import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
@@ -70,8 +73,6 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
   AudiobookChapter get currentChapter =>
       audiobook!.chapters.elementAt(currentIndex!);
 
-  double get screenWidth => MediaQuery.sizeOf(context).width - 32.w;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,36 +87,8 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: Column(
-              spacing: 24.h,
-              children: [
-                SizedBox(
-                  width: screenWidth * 3 / 4,
-                  height: (screenWidth * 3 / 4) * 386 / 199,
-                  child: MyImageWidget(
-                    image: audiobook!.coverphoto,
-                    borderRadius: 32.r,
-                  ),
-                ),
-                Column(
-                  spacing: 10.h,
-                  children: [
-                    Text(
-                      audiobook!.title.capitalizeAll,
-                      textAlign: TextAlign.center,
-                      style: textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      postedBy!.fullName!.capitalizeAll,
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.tertiary,
-                      ),
-                    )
-                  ],
-                )
-              ],
+            child: AudiobookCoverAndAuthorInfo(
+              audiobook: audiobook,
             ),
           ),
           SliverToBoxAdapter(
@@ -164,7 +137,8 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                                       ),
                               ),
                               Text(descendingTimerMixin(
-                                  snapshot.data ?? Duration.zero, player.duration ?? Duration.zero)),
+                                  snapshot.data ?? Duration.zero,
+                                  player.duration ?? Duration.zero)),
                             ],
                           );
                         });
@@ -313,85 +287,28 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
               final chapter = audiobook!.chapters.elementAt(index);
               final bool isCurrentChapter = index == currentIndex;
 
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    currentIndex = index;
+              return AudiobookChapterTile(
+                  chapter: chapter,
+                  selected: isCurrentChapter,
+                  isPlaying: player.playing,
+                  onPlay: () {
+                    () {
+                      setState(() {
+                        player.playing ? player.pause() : player.play();
+                      });
+                    };
+                  },
+                  onTap: () {
+                    setState(() {
+                      currentIndex = index;
 
-                    player.seek(Duration.zero, index: index);
+                      player.seek(Duration.zero, index: index);
+                    });
                   });
-                },
-                child: Container(
-                  padding: EdgeInsets.all(16.r),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isCurrentChapter ? colorScheme.secondary : null,
-                  ),
-                  child: Row(
-                      spacing: 16.w,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            spacing: 16.h,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(chapter.title),
-                              Text(
-                                "${(chapter.duration / 60).floor()} min",
-                                style: TextStyle(color: colorScheme.tertiary),
-                              ),
-                            ],
-                          ),
-                        ),
-                        PlayPauseWidget(
-                          // isCurrentChapter: isCurrentChapter,
-                          // colorScheme: colorScheme,
-                          onTap: () {
-                            setState(() {
-                              player.playing ? player.pause() : player.play();
-                            });
-                          },
-                          isPlaying: isCurrentChapter && player.playing,
-                        ),
-                      ]),
-                ).pOnly(bottom: 16.h),
-              );
             },
             itemCount: audiobook!.chapters.length,
           )
         ],
-      ),
-    );
-  }
-}
-
-class PlayPauseWidget extends StatelessWidget with StatelessThemesMixin {
-  const PlayPauseWidget({
-    super.key,
-    required this.isPlaying,
-    this.onTap,
-  });
-
-  final bool isPlaying;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(8.r),
-        decoration: BoxDecoration(
-            color: isPlaying
-                ? colorScheme(context).primary
-                : colorScheme(context).onSurface,
-            shape: BoxShape.circle),
-        child: Icon(
-          isPlaying ? Icons.pause : Icons.play_arrow,
-          color: colorScheme(context).onPrimary,
-          size: 40.r,
-        ),
       ),
     );
   }
