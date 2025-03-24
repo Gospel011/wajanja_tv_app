@@ -233,11 +233,11 @@ class AppRouterConfig {
 
         // log.d("CHECKING AUTH CUBIT: ${authCubit.state}");
 
-        log.f("Current location $currentLocation is logged in $isLoggedIn");
+        log.i("Current location $currentLocation is logged in $isLoggedIn");
 
         if ((currentLocation == '/login' || currentLocation == '/onboarding') &&
             isLoggedIn == true) {
-          log.f("\n::: \nUser is logged in so redirecting to home\n::: ");
+          log.i("\n::: \nUser is logged in so redirecting to home\n::: ");
           return '/home'; //? original
 
           // return '/roommates-page/roommates-filter';

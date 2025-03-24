@@ -109,6 +109,7 @@ class AppThemes {
 
     //* Scaffold theme
     scaffoldBackgroundColor: AppColors.bgLight,
+    // bottomNavigationBarTheme: BottomNavigationBarThemeData(backgroundColor: Colors.red),
     checkboxTheme: CheckboxThemeData(
       splashRadius: 0,
       overlayColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -279,6 +280,7 @@ class AppThemes {
 
     //* Scaffold theme
     scaffoldBackgroundColor: AppColors.bgDark,
+    
     checkboxTheme: CheckboxThemeData(
       splashRadius: 0,
       overlayColor: const WidgetStatePropertyAll(Colors.transparent),

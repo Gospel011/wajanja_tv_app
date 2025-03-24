@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
 
@@ -92,6 +93,19 @@ class Audiobook {
 
   @override
   String toString() {
-    return 'Audiobook(coverphoto: $coverphoto, postedBy: $postedBy, title: $title, description: $description, averageRating: $averageRating, likes: $likes, dislikes: $dislikes, chapters: $chapters, createdAt: $createdAt)';
+    return 'Audiobook(coverphoto: $coverphoto, postedBy: $postedBy)';
+  }
+
+  @override
+  bool operator ==(covariant Audiobook other) {
+    if (identical(this, other)) return true;
+  
+    return 
+      other.coverphoto == coverphoto;
+  }
+
+  @override
+  int get hashCode {
+    return coverphoto.hashCode;
   }
 }

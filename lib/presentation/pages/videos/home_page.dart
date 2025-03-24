@@ -44,14 +44,14 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
 
   @override
   Widget build(BuildContext context) {
-    log.f("STATES IN BUILD ${ref.read(userNotifierProvider)}");
+    log.i("STATES IN BUILD ${ref.read(userNotifierProvider)}");
 
     final authState = ref.watch(authNotifierProvider);
 
     final user = authState.user;
 
     ref.listen(authNotifierProvider, (prev, next) {
-      log.f("STATE: $next");
+      log.i("STATE: $next");
       switch (next.states) {
         case AuthStates.initial:
           context.goNamed(AppRoutes.login.name);
@@ -87,7 +87,7 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
               return VideoWidget(
                   video: video,
                   onTap: () {
-                    log.f("GO TO DESCRIPTION FOR VIDEO: $video");
+                    log.i("GO TO DESCRIPTION FOR VIDEO: $video");
 
                     context.pushNamed(
                       AppRoutes.videoDescription.name,

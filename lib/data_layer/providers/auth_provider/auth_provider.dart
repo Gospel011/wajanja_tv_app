@@ -20,7 +20,7 @@ class AuthNotifier extends Notifier<AuthState> {
     userState = ref.watch(userNotifierProvider);
     userNotifier = ref.read(userNotifierProvider.notifier);
 
-    log.f("NEW USER STATE: $userState");
+    log.i("NEW USER STATE: $userState");
 
     if (userState?.state == UserStates.userFetched) {
       user = userState!.user!;
@@ -149,11 +149,11 @@ class AuthNotifier extends Notifier<AuthState> {
       } else {
         // models.User newUser = models.User.fromCredential(credential);
 
-        // log.f("FETCHING USER: $userState");
+        // log.i("FETCHING USER: $userState");
 
         await userNotifier!.fetchUser(email);
 
-        // log.f("User state after request: $userState");
+        // log.i("User state after request: $userState");
 
         // }
 

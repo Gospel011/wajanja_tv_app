@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
+import 'package:wajanja/presentation/widgets/image_place_holder_widget.dart';
 import 'package:wajanja/utils/mixins.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -39,7 +40,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> with UiInfoMixin {
     //   "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
     // );
 
-    // log.f("PARSED URI: $uri");
+    // log.i("PARSED URI: $uri");
 
     // if (isYoutube) {
     //   final String? videoId =
@@ -51,7 +52,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> with UiInfoMixin {
     //     return;
     //   }
 
-    //   log.f("VIDEOID: $videoId");
+    //   log.i("VIDEOID: $videoId");
 
     //   _youtubePlayerController = YoutubePlayerController(
     //     initialVideoId: videoId,
@@ -90,39 +91,42 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> with UiInfoMixin {
 
   @override
   Widget build(BuildContext context) {
-    // log.f("is full screen: $isFullScreen");
-    // log.f(
-        // "is full screen from controller: ${widget.youtubePlayerController?.value.isFullScreen}");
+    // log.i("is full screen: $isFullScreen");
+    // log.i(
+    // "is full screen from controller: ${widget.youtubePlayerController?.value.isFullScreen}");
 
     return isYoutube
-        ? YoutubePlayerBuilder(
-            player: YoutubePlayer(
-              width: 100,
-              controller: widget.youtubePlayerController!,
-              // topActions: [
-              //   Spacer(),
-              //   IconButton(
-              //     onPressed: () {
-              
-              //       // _youtubePlayerController!.updateValue(YoutubePlayerValue());
-              //     },
-              //     icon: Icon(Icons.closed_caption_off),
-              //   ),
-              //   SizedBox(
-              //     width: 16.w,
-              //   ),
-              // ],
-              progressColors: ProgressBarColors(
-                backgroundColor: colorScheme.outlineVariant,
-                playedColor: colorScheme.primary,
-                bufferedColor: colorScheme.surfaceTint,
-                handleColor: colorScheme.primary,
-              ),
-            ),
-            builder: (BuildContext context, Widget player) {
-              return player;
-            },
-          )
+        ? (widget.youtubePlayerController == null
+            ? AspectRatio(
+                aspectRatio: 16 / 9, child: ImageLoadingPlaceHolderWidget())
+            : YoutubePlayerBuilder(
+                player: YoutubePlayer(
+                  // width: 100,
+                  controller: widget.youtubePlayerController!,
+                  // topActions: [
+                  //   Spacer(),
+                  //   IconButton(
+                  //     onPressed: () {
+
+                  //       // _youtubePlayerController!.updateValue(YoutubePlayerValue());
+                  //     },
+                  //     icon: Icon(Icons.closed_caption_off),
+                  //   ),
+                  //   SizedBox(
+                  //     width: 16.w,
+                  //   ),
+                  // ],
+                  progressColors: ProgressBarColors(
+                    backgroundColor: colorScheme.outlineVariant,
+                    playedColor: colorScheme.primary,
+                    bufferedColor: colorScheme.surfaceTint,
+                    handleColor: colorScheme.primary,
+                  ),
+                ),
+                builder: (BuildContext context, Widget player) {
+                  return player;
+                },
+              ))
         : SizedBox(
             width: MediaQuery.sizeOf(context).width,
             child: AspectRatio(

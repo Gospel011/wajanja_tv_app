@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,9 +8,11 @@ import 'package:just_audio/just_audio.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
+import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/audiobook_chapter_tile.dart';
 import 'package:wajanja/presentation/widgets/audiobook_cover.dart';
+import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
@@ -16,6 +20,7 @@ import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
 
 class AudiobookDetail extends ConsumerStatefulWidget {
@@ -35,47 +40,93 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
   int? currentIndex;
   User? postedBy;
 
-  final AudioPlayer player = AudioPlayer();
+  late final AudioPlayer player; // = AudioPlayer();
   late final ConcatenatingAudioSource playlist;
 
   TimerMode timerMode = TimerMode.descending;
 
+  late final StreamSubscription<PlayerState> subscription;
+
   @override
   void initState() {
     super.initState();
-    audiobook = widget.audiobook;
-    currentIndex = 0;
-    postedBy = ref.read(authNotifierProvider).user;
+    final audiobookState = ref.read(audioPlayerNotifierProvider);
 
-    playlist = ConcatenatingAudioSource(
-      useLazyPreparation: true,
-      children: List<AudioSource>.generate(
-        audiobook!.chapters.length,
-        (index) {
-          return AudioSource.uri(
-              Uri.parse(audiobook!.chapters.elementAt(index).url));
-        },
-      ),
+    player = ref.read(audioPlayerNotifierProvider).audiobookPlayer;
+
+    subscription = player.playerStateStream.listen(
+      (playerState) {
+        if (playerState.playing) {
+          ref
+              .read(audioPlayerNotifierProvider.notifier)
+              .updateCurrentPlayer(player);
+        }
+      },
     );
 
-    player
-      ..setAudioSource(
-        playlist,
-        initialIndex: 0,
-        initialPosition: Duration.zero,
-      )
-      ..setVolume(1)
-      ..play();
+    audiobook = widget.audiobook;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(audioPlayerNotifierProvider).player.pause();
+      ref.read(audioPlayerNotifierProvider.notifier).refresh();
+
+      ref
+          .read(audioPlayerNotifierProvider.notifier)
+          .updateAudiobook(audiobook: audiobook!);
+    });
+
+    log.f("BOOK FROM STATE: ${audiobookState.audiobook} $audiobook");
+
+    final bool isAudiobook = audiobookState.audiobook == audiobook;
+
+    currentIndex = audiobookState.currentChapter ?? 0;
+    postedBy = ref.read(authNotifierProvider).user;
+
+    playlist = isAudiobook
+        ? player.audioSource as ConcatenatingAudioSource
+        : ConcatenatingAudioSource(
+            useLazyPreparation: true,
+            children: List<AudioSource>.generate(
+              audiobook!.chapters.length,
+              (index) {
+                return AudioSource.uri(
+                    Uri.parse(audiobook!.chapters.elementAt(index).url));
+              },
+            ),
+          );
+
+    log.f("IS BOOK: $isAudiobook");
+
+    if (!isAudiobook) {
+      log.f("PLAYINGJ");
+      player
+        ..setAudioSource(
+          playlist,
+          initialIndex: 0,
+          initialPosition: Duration.zero,
+        )
+        ..setVolume(1)
+        ..play();
+    } else {
+      log.f("SKIP PLAYING");
+    }
   }
 
   @override
   void dispose() {
-    player.dispose();
+    subscription.cancel();
     super.dispose();
   }
 
   AudiobookChapter get currentChapter =>
       audiobook!.chapters.elementAt(currentIndex!);
+
+  void updateAudiobook(Audiobook audiobook, {int currentChapter = 0}) {
+    ref.read(audioPlayerNotifierProvider.notifier).updateAudiobook(
+          audiobook: audiobook,
+          currentChapter: currentChapter,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,75 +155,9 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
               child: Column(
             spacing: 18.h,
             children: [
-              StreamBuilder(
-                  stream: player.positionStream,
-                  builder: (context, snapshot) {
-                    final currentPosition = (snapshot.data?.inSeconds ?? 0);
-
-                    return StreamBuilder(
-                        stream: player.bufferedPositionStream,
-                        builder: (context, bufferSnapshot) {
-                          final bufferedPosition =
-                              (bufferSnapshot.data?.inSeconds ?? 0);
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("0:00"),
-                              Expanded(
-                                child: player.duration == null
-                                    ? MyLoadingWidget()
-                                    : Container(
-                                        constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.sizeOf(context)
-                                                    .width *
-                                                0.7),
-                                        child: Slider(
-                                          secondaryTrackValue:
-                                              bufferedPosition.toDouble(),
-                                
-                                          // inactiveColor: Colors.grey,
-                                          value: currentPosition.toDouble(),
-                                          // value: 0,
-                                          max: (player.duration?.inSeconds ?? 3)
-                                              .toDouble(),
-                                          // max: 1,
-                                          min: 0,
-                                          onChanged: (position) {
-                                            if (player.duration == null) return;
-                                            setState(() {
-                                              player.seek(Duration(
-                                                  seconds: position.toInt()));
-                                            });
-                                          },
-                                        ),
-                                      ),
-                              ),
-                              Builder(builder: (context) {
-                                final timer = getTimer(
-                                  timerMode: timerMode,
-                                  currentDuration:
-                                      snapshot.data ?? Duration.zero,
-                                  fullDuration:
-                                      player.duration ?? Duration.zero,
-                                );
-                              
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (timerMode == TimerMode.ascending) {
-                                        timerMode = TimerMode.descending;
-                                      } else {
-                                        timerMode = TimerMode.ascending;
-                                      }
-                                    });
-                                  },
-                                  child: Text(timer, textAlign: TextAlign.end, style: TextStyle(fontSize: 20.sp),),
-                                );
-                              }),
-                            ],
-                          );
-                        });
-                  }),
+              AudioPlayerSlider(
+                player: player,
+              ),
               Builder(builder: (context) {
                 final liked = audiobook!.likes.contains(postedBy!.email);
                 final disliked = audiobook!.dislikes.contains(postedBy!.email);
@@ -227,6 +212,11 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                               setState(() {
                                 currentIndex = currentIndex! - 1;
                                 player.seek(Duration.zero, index: currentIndex);
+
+                                updateAudiobook(
+                                  audiobook!,
+                                  currentChapter: currentIndex!,
+                                );
                               });
                             },
                             child: Icon(
@@ -258,6 +248,10 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                               setState(() {
                                 currentIndex = currentIndex! + 1;
                                 player.seekToNext();
+                                updateAudiobook(
+                                  audiobook!,
+                                  currentChapter: currentIndex!,
+                                );
                               });
                             },
                             child: Icon(
@@ -322,17 +316,20 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                   selected: isCurrentChapter,
                   isPlaying: player.playing,
                   onPlay: () {
-                    () {
-                      setState(() {
-                        player.playing ? player.pause() : player.play();
-                      });
-                    };
+                    setState(() {
+                      player.playing ? player.pause() : player.play();
+                    });
                   },
                   onTap: () {
                     setState(() {
                       currentIndex = index;
 
                       player.seek(Duration.zero, index: index);
+
+                      updateAudiobook(
+                        audiobook!,
+                        currentChapter: currentIndex!,
+                      );
                     });
                   });
             },

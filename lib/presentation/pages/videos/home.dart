@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/presentation/pages/videos/video_description.dart';
+import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/mixins.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key, required this.shell});
 
   final StatefulNavigationShell shell;
 
   @override
-  State<Home> createState() => _HomeState();
+  ConsumerState<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with ThemesMixin {
+class _HomeState extends ConsumerState<Home> with ThemesMixin {
   static final navIcons = [
     AppSvgs.video,
     AppSvgs.news,
@@ -23,13 +26,28 @@ class _HomeState extends State<Home> with ThemesMixin {
     AppSvgs.podcast
   ];
 
+  // get ref => null;
+
   @override
   Widget build(BuildContext context) {
+    final audioPlayerState = ref.watch(audioPlayerNotifierProvider);
+
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
+      floatingActionButton: audioPlayerState.currentPlayer != null
+          ? PlayPauseWidget(
+              isPlaying: audioPlayerState.currentPlayer!.playing,
+              onTap: () {
+                final player = audioPlayerState.currentPlayer!;
+
+                setState(() {
+                  player.playing ? player.pause() : player.play();
+                });
+              },
+            )
+          : null,
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          widget.shell,
           Container(
             decoration: BoxDecoration(
                 color: colorScheme.secondary,
@@ -58,14 +76,12 @@ class _HomeState extends State<Home> with ThemesMixin {
                     ),
                   );
                 }),
-                // IconContainer(icon: AppSvgs.news),
-                // IconContainer(icon: AppSvgs.audiobook),
-                // IconContainer(icon: AppSvgs.podcast),
               ],
             ),
-          ).pSymmetric(vertical: 20.h)
+          ),
         ],
-      ),
+      ).pOnly(left: 0, right: 0, top: 0, bottom: 24.h),
+      body: widget.shell,
     );
   }
 }

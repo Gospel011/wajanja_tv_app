@@ -23,7 +23,7 @@ class AudiobookChapterTile extends StatelessWidget with StatelessThemesMixin {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:onTap,
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(16.r),
         alignment: Alignment.center,
@@ -48,7 +48,7 @@ class AudiobookChapterTile extends StatelessWidget with StatelessThemesMixin {
                 ),
               ),
               PlayPauseWidget(
-                onTap: onPlay,
+                onTap: selected ? onPlay : onTap,
                 isPlaying: selected && isPlaying,
               ),
             ]),

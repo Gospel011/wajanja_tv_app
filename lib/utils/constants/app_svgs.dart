@@ -22,4 +22,5 @@ class AppSvgs {
   static final audiobook = SvgPicture.asset('assets/svg/audiobook.svg');
   static final podcast = SvgPicture.asset('assets/svg/podcast.svg');
   static final starFilled = SvgPicture.asset('assets/svg/star_filled.svg');
+  static final arrowDown = SvgPicture.asset('assets/svg/arrow_down.svg');
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wajanja/data_layer/models/controllers/audioplayer_controller.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
+import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/my_video_player.dart';
@@ -50,46 +52,58 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
 
     video = widget.video;
 
+    setupPlayer();
+  }
+
+  Future<void> setupPlayer() async {
     final uri = Uri.parse(video!.url ?? video!.youtubeUrl ?? video!.vimeoUrl!);
 
     isYoutube = video!.url == null &&
         video!.vimeoUrl == null &&
         video!.youtubeUrl != null;
 
-    // final uri = Uri.parse(
-    //   "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-    // );
+    log.i("PARSED URI: $uri");
+    await Future.wait([
+      ref.read(audioPlayerNotifierProvider).player.pause(),
+      ref.read(audioPlayerNotifierProvider).audiobookPlayer.pause(),
+    ]);
 
-    log.f("PARSED URI: $uri");
+    ref.read(audioPlayerNotifierProvider.notifier).refresh();
 
-    if (isYoutube) {
-      final String? videoId = YoutubePlayer.convertUrlToId(video!.youtubeUrl!);
+    if (!mounted) return;
 
-      if (videoId == null) {
-        showSnackMessage(context, "This video contains an invalid youtube url",
-            error: true);
-        return;
+    setState(() {
+      if (isYoutube) {
+        final String? videoId =
+            YoutubePlayer.convertUrlToId(video!.youtubeUrl!);
+
+        if (videoId == null) {
+          showSnackMessage(
+              context, "This video contains an invalid youtube url",
+              error: true);
+          return;
+        }
+
+        log.i("VIDEOID: $videoId");
+
+        _youtubePlayerController = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: YoutubePlayerFlags(enableCaption: false),
+        );
+
+        // _youtubePlayerController.
+
+        isFullScreen = _youtubePlayerController?.value.isFullScreen;
+
+        _youtubePlayerController?.addListener(youtubePlayerListener);
+      } else {
+        _playerController = VideoPlayerController.networkUrl(
+          uri,
+        )
+          ..initialize()
+          ..play();
       }
-
-      log.f("VIDEOID: $videoId");
-
-      _youtubePlayerController = YoutubePlayerController(
-        initialVideoId: videoId,
-        flags: YoutubePlayerFlags(enableCaption: false),
-      );
-
-      // _youtubePlayerController.
-
-      isFullScreen = _youtubePlayerController?.value.isFullScreen;
-
-      _youtubePlayerController?.addListener(youtubePlayerListener);
-    } else {
-      _playerController = VideoPlayerController.networkUrl(
-        uri,
-      )
-        ..initialize()
-        ..play();
-    }
+    });
   }
 
   @override
@@ -113,8 +127,8 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
 
   @override
   Widget build(BuildContext context) {
-    log.f("Video: ${video?.title}");
-    log.f("widget video: ${widget.video?.title}");
+    log.i("Video: ${video?.title}");
+    log.i("widget video: ${widget.video?.title}");
     return Scaffold(
       body: video == null
           ? Center(
@@ -263,7 +277,7 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                               maxLength: 4,
                               onVideoTap: (newVideo) {
                                 if (video == newVideo) {
-                                  log.f(
+                                  log.i(
                                     "RETURNING SINCE SAME VIDEO WAS CLICKED",
                                   );
 

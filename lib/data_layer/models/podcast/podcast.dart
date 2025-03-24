@@ -1,10 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:wajanja/utils/constants/enums.dart';
+
 class Podcast {
   final String postedBy;
   final String title;
   final List<String> speakers;
-  final List<String> genre;
+  final List<PodcastGenre> genre;
   final String coverphoto;
   final String url;
   Podcast({
@@ -20,7 +23,7 @@ class Podcast {
     String? postedBy,
     String? title,
     List<String>? speakers,
-    List<String>? genre,
+    List<PodcastGenre>? genre,
     String? coverphoto,
     String? url,
   }) {
@@ -39,7 +42,7 @@ class Podcast {
       'postedBy': postedBy,
       'title': title,
       'speakers': speakers,
-      'genre': genre,
+      'genre': genre.map((el) => el.describe).toList(),
       'coverphoto': coverphoto,
       'url': url,
     };
@@ -50,7 +53,8 @@ class Podcast {
       postedBy: map['postedBy'] as String,
       title: map['title'] as String,
       speakers: List<String>.from((map['speakers'] as List<dynamic>)),
-      genre: List<String>.from((map['genre'] as List<dynamic>)),
+      genre: List<PodcastGenre>.from((map['genre'] as List<dynamic>)
+          .map((el) => PodcastGenre.fromString(el as String))),
       coverphoto: map['coverphoto'] as String,
       url: map['url'] as String,
     );
@@ -58,10 +62,11 @@ class Podcast {
 
   String toJson() => json.encode(toMap());
 
-  factory Podcast.fromJson(String source) => Podcast.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Podcast.fromJson(String source) =>
+      Podcast.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'Podcast(postedBy: $postedBy, title: $title, speakers: $speakers, genre: $genre, coverphoto: $coverphoto, url: $url)';
+    return 'Podcast(postedBy: $postedBy, title: $title, speakers: $speakers, genre: ${genre.map((el) => el.describe).toList()}, coverphoto: $coverphoto, url: $url)';
   }
 }
