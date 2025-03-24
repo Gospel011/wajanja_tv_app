@@ -126,7 +126,10 @@ enum AppRoutes {
   videoDescription,
   news,
   audiobooks,
-  podcasts, newsDetails, imageView, audiobooksDetail;
+  podcasts,
+  newsDetails,
+  imageView,
+  audiobooksDetail;
 
   String get path => name.kebabCase;
 }
@@ -423,3 +426,5 @@ enum NewsSectionType {
     );
   }
 }
+
+enum TimerMode { ascending, descending }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
@@ -12,6 +13,7 @@ import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
+import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/mixins.dart';
@@ -35,6 +37,8 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
 
   final AudioPlayer player = AudioPlayer();
   late final ConcatenatingAudioSource playlist;
+
+  TimerMode timerMode = TimerMode.descending;
 
   @override
   void initState() {
@@ -111,34 +115,60 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                           final bufferedPosition =
                               (bufferSnapshot.data?.inSeconds ?? 0);
                           return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("0:00"),
                               Expanded(
                                 child: player.duration == null
                                     ? MyLoadingWidget()
-                                    : Slider(
-                                        secondaryTrackValue:
-                                            bufferedPosition.toDouble(),
-
-                                        // inactiveColor: Colors.grey,
-                                        value: currentPosition.toDouble(),
-                                        // value: 0,
-                                        max: (player.duration?.inSeconds ?? 3)
-                                            .toDouble(),
-                                        // max: 1,
-                                        min: 0,
-                                        onChanged: (position) {
-                                          if (player.duration == null) return;
-                                          setState(() {
-                                            player.seek(Duration(
-                                                seconds: position.toInt()));
-                                          });
-                                        },
+                                    : Container(
+                                        constraints: BoxConstraints(
+                                            maxWidth: MediaQuery.sizeOf(context)
+                                                    .width *
+                                                0.7),
+                                        child: Slider(
+                                          secondaryTrackValue:
+                                              bufferedPosition.toDouble(),
+                                
+                                          // inactiveColor: Colors.grey,
+                                          value: currentPosition.toDouble(),
+                                          // value: 0,
+                                          max: (player.duration?.inSeconds ?? 3)
+                                              .toDouble(),
+                                          // max: 1,
+                                          min: 0,
+                                          onChanged: (position) {
+                                            if (player.duration == null) return;
+                                            setState(() {
+                                              player.seek(Duration(
+                                                  seconds: position.toInt()));
+                                            });
+                                          },
+                                        ),
                                       ),
                               ),
-                              Text(descendingTimerMixin(
-                                  snapshot.data ?? Duration.zero,
-                                  player.duration ?? Duration.zero)),
+                              Builder(builder: (context) {
+                                final timer = getTimer(
+                                  timerMode: timerMode,
+                                  currentDuration:
+                                      snapshot.data ?? Duration.zero,
+                                  fullDuration:
+                                      player.duration ?? Duration.zero,
+                                );
+                              
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (timerMode == TimerMode.ascending) {
+                                        timerMode = TimerMode.descending;
+                                      } else {
+                                        timerMode = TimerMode.ascending;
+                                      }
+                                    });
+                                  },
+                                  child: Text(timer, textAlign: TextAlign.end, style: TextStyle(fontSize: 20.sp),),
+                                );
+                              }),
                             ],
                           );
                         });

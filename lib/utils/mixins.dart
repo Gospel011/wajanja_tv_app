@@ -33,6 +33,15 @@ mixin TimerMixin {
 
     return "${(duration / 60).floor().toString().padLeft(2, "0")}:${(duration % 60).toString().padLeft(2, "0")}";
   }
+
+  String getTimer(
+      {TimerMode timerMode = TimerMode.descending,
+      required Duration currentDuration,
+      required Duration fullDuration}) {
+    return timerMode == TimerMode.descending
+        ? descendingTimerMixin(currentDuration, fullDuration)
+        : ascendingTimerMixin(currentDuration);
+  }
 }
 
 mixin AppBarMixin {
