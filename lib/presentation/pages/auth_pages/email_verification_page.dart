@@ -132,6 +132,8 @@ class _EmailVerificationPageState extends ConsumerState<EmailVerificationPage>
           await showMessage(context, "Success",
               "Your email has been verified successfully, please login with your details to continue.");
 
+          await ref.read(authNotifierProvider.notifier).logout();
+
           if (!context.mounted) return;
 
           context.goNamed(AppRoutes.login.name);

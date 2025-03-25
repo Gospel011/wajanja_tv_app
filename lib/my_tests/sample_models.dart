@@ -93,4 +93,28 @@ Watch all new episodes of The UnXplained, Fridays at 9/8c, and stay up to date o
     city: "Owerri",
     createdAt: Timestamp.fromDate(DateTime(2024, 3, 10)),
   ),
+  Video(
+    title: "Master Enum Serialization in Flutter | Complete Guide for JSON and API Handling",
+    description:
+        """Learn how to efficiently serialize Enums in Flutter in this step-by-step tutorial! Whether you're working with JSON, APIs, or building a dynamic Flutter app, understanding Enum serialization is key to managing your data effectively. 
+
+In this video, we’ll look at how to serialize and deserialize Enums.
+
+🔗 Resources:
+Official Flutter Enum Documentation: https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqay13WVVPT25PdWZ5d3lwRmlEV25IdUJqWWlnUXxBQ3Jtc0tuTDdvV1V0c1ZibDBYNkI3SXJRNG1lN1hTQXNMR0dhTU1salhkMUVfWHJOSTlPbXVYZnBIOHNZaEVnemJMQWRhTVRMbnJUOExCN3V0ZXBOSGJIX1Y4M0pWeGU0OFRfaXpvQzdVTTJsbTh4enRFaTcwZw&q=https%3A%2F%2Fapi.flutter.dev%2Fflutter%2Fdart-core%2FEnum-class.html&v=_CbfvtSndhI
+
+Make sure to like, comment, and subscribe for more Flutter development tips and tutorials.""",
+    // coverPhotoPortrait:
+    //     "https://i.ytimg.com/vi/3YNH6hf-1hk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC-bVNoRBp86R69zdvnSD9ERZGSpQ",
+    postedBy: "ugochukwugospel001@gmail.com",
+    // url: null,
+    youtubeUrl: "https://youtu.be/_CbfvtSndhI?si=ls1OctGZGBjzCjsP",
+    // vimeoUrl: null,
+    category: VideoCategories.education,
+    likes: [],
+    dislikes: [],
+    country: "NG",
+    city: "Owerri",
+    createdAt: Timestamp.fromDate(DateTime(2024, 3, 10)),
+  ),
 ];

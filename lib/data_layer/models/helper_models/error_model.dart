@@ -24,14 +24,24 @@ class AppError extends Error {
   factory AppError.fromMap(Map<String, dynamic> map) {
     return AppError(
       title: map['title'] as String,
-      content: map['content'] as String,
+      content: (map['content'] ?? map['message']) as String,
     );
+  }
+
+  factory AppError.fromErrorObject(Object e) {
+    final Map<String, dynamic> res = AppError.handleError(e);
+
+    return AppError.fromMap(res);
   }
 
   static Map<String, String> handleError(Object e) {
     // String errno = "$e".split('errno = ')[1].split('),')[0];
     // log.d("E R R O R NUMBER IS $errno :::");
+
+
     log.d(" E R R IS $e");
+
+    
     if (e is http.ClientException || e is TlsException) {
       return {
         "title": "Network Error",

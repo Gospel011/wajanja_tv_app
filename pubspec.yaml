@@ -60,6 +60,11 @@ dependencies:
   expandable_text: ^2.3.0
   intl: ^0.20.2
   just_audio: ^0.9.46
+  image_picker: ^1.1.2
+  image_cropper: ^9.0.0
+  cloudinary_api: ^1.1.0
+  cloudinary_url_gen: ^1.7.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

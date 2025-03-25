@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
 
 class MyExpandableText extends StatefulWidget {
@@ -19,7 +20,8 @@ class MyExpandableText extends StatefulWidget {
   State<MyExpandableText> createState() => _MyExpandableTextState();
 }
 
-class _MyExpandableTextState extends State<MyExpandableText> with ThemesMixin {
+class _MyExpandableTextState extends State<MyExpandableText>
+    with ThemesMixin, UiInfoMixin, UrlMixin {
   // Future<void> _launchUrl(String url, context) async {
   @override
   Widget build(BuildContext context) {
@@ -37,14 +39,17 @@ class _MyExpandableTextState extends State<MyExpandableText> with ThemesMixin {
               isDarkTheme ? colorScheme.primary : colorScheme.tertiaryFixedDim,
           fontWeight: isDarkTheme ? FontWeight.w500 : FontWeight.bold,
         ).merge(widget.linkStyle),
-        // onUrlTap: (url) {
-        //   log.i("Url $url tapped");
+        onUrlTap: (url) {
+          log.f("Url $url tapped");
 
-        //   _launchUrl(url, context);
-        // },
-        // urlStyle: const TextStyle(
-        //   color: AppColors.maincolorBlue,
-        // ),
+          // launch(url, context);
+          launch(context, uri: Uri.parse(url));
+        },
+        urlStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w500,
+          overflow: TextOverflow.ellipsis,
+        ),
         // linkStyle: const TextStyle(
         //   color: Colors.black,
         // ),

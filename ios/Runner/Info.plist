@@ -21,7 +21,11 @@
 			</array>
 		</dict>
 	</array>
-<!-- End of the Google Sign-in Section -->
+	<!-- End of the Google Sign-in Section -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to enable you pick pictures</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to enable you take pictures</string>
 	<!--* CUSTOM SETUP ENDS -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

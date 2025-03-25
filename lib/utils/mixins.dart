@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
@@ -41,6 +44,70 @@ mixin TimerMixin {
     return timerMode == TimerMode.descending
         ? descendingTimerMixin(currentDuration, fullDuration)
         : ascendingTimerMixin(currentDuration);
+  }
+}
+
+mixin DebounceMixin {
+  Timer? _timer;
+
+  void debounce(
+      {required dynamic Function() fn,
+      Duration duration = const Duration(milliseconds: 300)}) {
+    if (_timer?.isActive == true) _timer?.cancel();
+
+    _timer = Timer(duration, fn);
+  }
+}
+
+mixin ImageMixin {
+  ImagePicker imagePicker = ImagePicker();
+
+  Future<XFile?> getSingleImageFromSource(
+      {ImageSource source = ImageSource.gallery}) async {
+    XFile? image =
+        await imagePicker.pickImage(source: source, imageQuality: 80);
+
+    // log.i("Image: $image");
+
+    return image;
+  }
+
+  Future<List<XFile?>> getMultipleImagesFromSource(
+      {ImageSource source = ImageSource.gallery}) async {
+    List<XFile?> images = await imagePicker.pickMultiImage(imageQuality: 80);
+
+    // log.i("Images: $images");
+    return images;
+  }
+
+  // void processPickedImage(BuildContext context, File file) {}
+
+  Future<CroppedFile?> cropImage(
+      {required String path,
+      List<CropAspectRatioPresetData>? aspectRatioPresets,
+      CropAspectRatio? aspectRatio}) async {
+    return await ImageCropper().cropImage(
+      sourcePath: path,
+      aspectRatio: aspectRatio,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.deepOrange,
+          toolbarWidgetColor: Colors.white,
+          aspectRatioPresets: aspectRatioPresets ??
+              [
+                CropAspectRatioPreset.square,
+              ],
+        ),
+        IOSUiSettings(
+          title: 'Cropper',
+          aspectRatioPresets: aspectRatioPresets ??
+              [
+                CropAspectRatioPreset.square,
+              ],
+        ),
+      ],
+    );
   }
 }
 
@@ -85,7 +152,7 @@ mixin AppBarMixin {
                       child: Row(
                         spacing: 10.w,
                         children: [
-                          Icon(Icons.settings),
+                          Icon(Icons.settings_rounded),
                           Text("Settings"),
                         ],
                       )),
@@ -94,7 +161,7 @@ mixin AppBarMixin {
                       child: Row(
                         spacing: 10.w,
                         children: [
-                          Icon(Icons.logout),
+                          Icon(Icons.logout_rounded),
                           Text("Logout"),
                         ],
                       )),

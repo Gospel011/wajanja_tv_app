@@ -129,7 +129,9 @@ enum AppRoutes {
   podcasts,
   newsDetails,
   imageView,
-  audiobooksDetail, profile, settings;
+  audiobooksDetail,
+  profile,
+  settings;
 
   String get path => name.kebabCase;
 }
@@ -558,6 +560,14 @@ enum PodcastGenre {
       ),
     );
   }
+}
+
+enum CloudinaryUploadPath {
+  audiobooks,
+  podcasts,
+  photo_urls;
+
+  String get describe => "wajanja_tv/$name";
 }
 
 enum HomeActions { view_profile, logout, settings }

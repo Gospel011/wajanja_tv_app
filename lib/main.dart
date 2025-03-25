@@ -11,10 +11,13 @@ import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart'
 import 'package:wajanja/data_layer/providers/theme_provider/theme_state.dart';
 import 'package:wajanja/firebase_options.dart';
 import 'package:wajanja/presentation/pages/go_router_config.dart';
+import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
 import 'package:wajanja/utils/themes/themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  CloudinaryHelper.instance.initCloudinary();
 
   await Hive.initFlutter();
 

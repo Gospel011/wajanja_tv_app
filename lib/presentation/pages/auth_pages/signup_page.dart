@@ -21,11 +21,21 @@ class SignupPage extends ConsumerStatefulWidget {
 }
 
 class _SignupPageState extends ConsumerState<SignupPage> with UiInfoMixin {
-  final fullName = TextEditingController(text: 'Faro Dojeh');
-  final email = TextEditingController(text: 'dipogoh387@bankrau.com');
-  final phone = TextEditingController(text: '09090899878');
-  final password = TextEditingController(text: 'testUser1@');
-  final confirmPassword = TextEditingController(text: 'testUser1@');
+  final fullName = TextEditingController(
+    // text: 'Faro Dojeh',
+  );
+  final email = TextEditingController(
+    // text: 'dipogoh387@bankrau.com',
+  );
+  final phone = TextEditingController(
+    // text: '09090899878',
+  );
+  final password = TextEditingController(
+    // text: 'testUser1@',
+  );
+  final confirmPassword = TextEditingController(
+    // text: 'testUser1@',
+  );
 
   bool obscureText = true;
 

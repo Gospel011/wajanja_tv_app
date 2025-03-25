@@ -22,8 +22,12 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> with UiInfoMixin {
-  final email = TextEditingController(text: 'dipogoh387@bankrau.com');
-  final password = TextEditingController(text: 'testUser1@');
+  final email = TextEditingController(
+    // text: 'dipogoh387@bankrau.com',
+  );
+  final password = TextEditingController(
+    // text: 'testUser1@',
+  );
 
   bool obscureText = true;
 

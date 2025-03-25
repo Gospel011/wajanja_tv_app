@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
+import 'package:wajanja/data_layer/models/helper_models/file_model.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/utils/constants/enums.dart';
+import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
+import 'dart:io' as io;
 part 'user_state.dart';
 
 class UserNotifier extends Notifier<UserState> {
@@ -19,7 +22,7 @@ class UserNotifier extends Notifier<UserState> {
         toFirestore: (user, _) => user.toFirestore(),
       );
 
-  Future<void> upsertUser(User user) async {
+  Future<void> upsertUser(User user, {File? photo}) async {
     state = state.copyWith(state: UserStates.upsertingUser);
 
     try {
@@ -54,16 +57,38 @@ class UserNotifier extends Notifier<UserState> {
         }
       }
 
+      String? photoUrl;
+
+      if (photo != null) {
+        photoUrl = await CloudinaryHelper.instance.upload(
+          io.File(photo.path),
+          path: CloudinaryUploadPath.photo_urls,
+        );
+
+        if (user.photoURL != null) {
+          // try {
+            await CloudinaryHelper.instance.delete(user.photoURL!);
+          // } catch (e) {
+          //   log.f(e);
+          // }
+        }
+      }
+
+      log.f("PHOTO URL: $photoUrl");
+
       // return;
-      await usersRef.doc(user.email!).set(user, SetOptions(merge: true));
+      await usersRef
+          .doc(user.email!)
+          .set(user.copyWith(photoURL: photoUrl), SetOptions(merge: true));
       state = state.copyWith(
         state: UserStates.userUpserted,
-        user: user,
+        user: user.copyWith(photoURL: photoUrl),
       );
     } catch (e) {
       state = state.copyWith(
-          state: UserStates.upsertingUserFailed,
-          error: AppError(title: "Error", content: e.toString()));
+        state: UserStates.upsertingUserFailed,
+        error: AppError.fromErrorObject(e),
+      );
     }
   }
 

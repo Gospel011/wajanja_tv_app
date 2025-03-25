@@ -107,7 +107,11 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
                     );
                   });
             },
-          ).spSymmetric(horizontal: 16.w)
+          ).spSymmetric(horizontal: 16.w),
+          SliverToBoxAdapter(
+              child: SizedBox(
+            height: 24.h,
+          ))
         ],
       ),
     );
