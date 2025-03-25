@@ -115,129 +115,84 @@ class _ProfilePageState extends ConsumerState<ProfilePage>
               return;
             }
 
-
-            
-
             ref.read(userNotifierProvider.notifier).upsertUser(
-                  newUser, photo: photo,
+                  newUser,
+                  photo: photo,
                 );
           },
         ).pOnly(left: 16.w, right: 16.w, bottom: 20.h);
       }),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 16.h,
+            ),
+            Column(
+              spacing: 24.h,
               children: [
-                SizedBox(
-                  height: 64.h,
+                ProfilePicture(
+                  user: user,
+                  size: 96.r,
+                  file: photo,
+                  onTap: () async {
+                    final XFile? pickedImage = await getSingleImageFromSource();
+                    if (!context.mounted) return;
+                    processPickedImage(context, pickedImage);
+                  },
                 ),
-                Column(
-                  spacing: 24.h,
-                  children: [
-                    ProfilePicture(
-                      user: user,
-                      size: 96.r,
-                      file: photo,
-                      onTap: () async {
-                        final XFile? pickedImage =
-                            await getSingleImageFromSource();
-                        if (!context.mounted) return;
-                        processPickedImage(context, pickedImage);
-                        // showMyBottomSheet(context, children: [
-                        //   Row(
-                        //     spacing: 10.w,
-                        //     children: [
-                        //       Icon(
-                        //         Icons.camera_rounded,
-                        //         size: 24.r,
-                        //       ),
-                        //       Text(
-                        //         "Take a picture",
-                        //         style: textTheme.titleMedium,
-                        //       )
-                        //     ],
-                        //   ).pSymmetric(vertical: 10.h),
-                        //   GestureDetector(
-                        //     onTap: () async {
-                        //       context.pop();
-                        //       final XFile? pickedImage =
-                        //           await getSingleImageFromSource();
-                        //       if (!context.mounted) return;
-                        //       processPickedImage(context, pickedImage);
-                        //     },
-                        //     child: Row(
-                        //       spacing: 10.w,
-                        //       children: [
-                        //         Icon(
-                        //           Icons.photo_album_rounded,
-                        //           size: 24.r,
-                        //         ),
-                        //         Text(
-                        //           "Choose from gallery",
-                        //           style: textTheme.titleMedium,
-                        //         )
-                        //       ],
-                        //     ).pSymmetric(vertical: 10.h),
-                        //   )
-                        // ]);
-                      },
-                    ),
-                    Text(
-                      user?.fullName ?? '',
-                      textAlign: TextAlign.center,
-                      style: textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                Text(
+                  user?.fullName ?? '',
+                  textAlign: TextAlign.center,
+                  style: textTheme.headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.w500),
                 ),
-                SizedBox(
-                  height: 84.h,
-                ),
-                Column(
-                  spacing: 20.h,
-                  children: [
-                    MyTextFormField(
-                      controller: _fullName,
-                      sectionText: "Full name",
-                      validator: (value) => nonNullValidator(
-                        value,
-                        message: "Please provide your name",
-                      ),
-                      hintText: 'Enter your full name',
-                    ),
-                    MyTextFormField(
-                      controller: _email,
-                      sectionText: "Email",
-                      validator: emailValidator,
-                      readOnly: true,
-                      hintText: 'Enter your full email',
-                    ),
-                    MyTextFormField(
-                      controller: _userName,
-                      sectionText: "Username",
-                      keyboardType: TextInputType.emailAddress,
-                      validator: emailValidator,
-                      hintText: 'Alice123',
-                    ),
-                    MyTextFormField(
-                      sectionText: "Phone",
-                      controller: _phone,
-                      hintText: "+234-123-456-7890",
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      keyboardType: TextInputType.number,
-                      validator: (value) => nonNullValidator(value,
-                          message: "Please provide your phone number"),
-                    )
-                  ],
-                ),
-
-
-                SizedBox(height: 24.h),
               ],
-            ).pSymmetric(),
-          ),
-        ),
+            ),
+            SizedBox(
+              height: 84.h,
+            ),
+            Column(
+              spacing: 20.h,
+              children: [
+                MyTextFormField(
+                  controller: _fullName,
+                  sectionText: "Full name",
+                  validator: (value) => nonNullValidator(
+                    value,
+                    message: "Please provide your name",
+                  ),
+                  hintText: 'Enter your full name',
+                ),
+                MyTextFormField(
+                  controller: _email,
+                  sectionText: "Email",
+                  validator: emailValidator,
+                  readOnly: true,
+                  hintText: 'Enter your full email',
+                ),
+                MyTextFormField(
+                  controller: _userName,
+                  sectionText: "Username",
+                  keyboardType: TextInputType.emailAddress,
+                  validator: emailValidator,
+                  hintText: 'Alice123',
+                ),
+                MyTextFormField(
+                  sectionText: "Phone",
+                  controller: _phone,
+                  hintText: "+234-123-456-7890",
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.number,
+                  validator: (value) => nonNullValidator(value,
+                      message: "Please provide your phone number"),
+                )
+              ],
+            ),
+
+            SizedBox(height: 24.h),
+          ],
+        ).pSymmetric(),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wajanja/data_layer/models/controllers/audioplayer_controller.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';

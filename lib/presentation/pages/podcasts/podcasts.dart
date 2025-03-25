@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:wajanja/data_layer/models/controllers/audioplayer_controller.dart';
 import 'package:wajanja/data_layer/models/podcast/podcast.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/my_tests/sample_podcasts.dart';

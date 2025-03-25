@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
@@ -13,12 +12,9 @@ import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/audiobook_chapter_tile.dart';
 import 'package:wajanja/presentation/widgets/audiobook_cover.dart';
 import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
-import 'package:wajanja/presentation/widgets/my_image_widget.dart';
-import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
-import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';

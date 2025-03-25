@@ -8,7 +8,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart';
-import 'package:wajanja/data_layer/providers/theme_provider/theme_state.dart';
 import 'package:wajanja/firebase_options.dart';
 import 'package:wajanja/presentation/pages/go_router_config.dart';
 import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
