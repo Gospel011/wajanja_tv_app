@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wajanja/data_layer/models/helper_models/file_model.dart';
@@ -16,10 +15,8 @@ import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
-import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
 import 'package:wajanja/utils/mixins.dart';
 import 'package:wajanja/utils/validators/validators.dart';
-import 'dart:io' as io;
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});

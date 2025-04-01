@@ -57,9 +57,8 @@ class _HomePageState extends ConsumerState<HomePage> with AppBarMixin {
   Widget build(BuildContext context) {
     log.i("STATES IN BUILD ${ref.read(userNotifierProvider)}");
 
-    final authState = ref.watch(authNotifierProvider);
+    ref.watch(authNotifierProvider);
 
-    final user = authState.user;
 
     ref.listen(authNotifierProvider, (prev, next) {
       log.i("STATE: $next");

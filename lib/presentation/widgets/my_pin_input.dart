@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
-import 'package:wajanja/utils/constants/app_constants.dart';
 
 class MyPinInput extends StatelessWidget {
   const MyPinInput({
@@ -60,13 +59,13 @@ class MyPinInput extends StatelessWidget {
       preFilledWidget: Text(hintText ?? ''),
       onCompleted: onCompleted,
       separatorBuilder: (_) {
-        final screenWidth = MediaQuery.sizeOf(context).width;
+        // final screenWidth = MediaQuery.sizeOf(context).width;
 
-        final separatorWidth =
-            (screenWidth -
-                2 * AppConstants.defaultPadding -
-                (size ?? 70.r) * length) /
-            (length - 1);
+        // final separatorWidth =
+        //     (screenWidth -
+        //         2 * AppConstants.defaultPadding -
+        //         (size ?? 70.r) * length) /
+        //     (length - 1);
 
         // print("_______________________");
         // print("screen width: $screenWidth");
