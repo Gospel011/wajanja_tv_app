@@ -40,7 +40,7 @@ class _MyExpandableTextState extends State<MyExpandableText>
           fontWeight: isDarkTheme ? FontWeight.w500 : FontWeight.bold,
         ).merge(widget.linkStyle),
         onUrlTap: (url) {
-          log.f("Url $url tapped");
+          log.i("Url $url tapped");
 
           // launch(url, context);
           launch(context, uri: Uri.parse(url));

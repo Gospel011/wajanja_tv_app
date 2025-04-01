@@ -30,7 +30,7 @@ class VideoDescription extends ConsumerStatefulWidget {
 }
 
 class _VideoDescriptionState extends ConsumerState<VideoDescription>
-    with UiInfoMixin, ThemesMixin {
+    with UiInfoMixin, ThemesMixin, DebounceMixin {
   VideoPlayerController? _playerController;
   YoutubePlayerController? _youtubePlayerController;
   late bool isYoutube;
@@ -95,6 +95,8 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
         isFullScreen = _youtubePlayerController?.value.isFullScreen;
 
         _youtubePlayerController?.addListener(youtubePlayerListener);
+
+        confirmVideoIsPlaying();
       } else {
         _playerController = VideoPlayerController.networkUrl(
           uri,
@@ -122,6 +124,53 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
         isFullScreen = _youtubePlayerController!.value.isFullScreen;
       });
     }
+
+    // log.f("value ${_youtubePlayerController?.value}");
+
+    // switch (_youtubePlayerController!.value.playerState) {
+    //   case PlayerState.:
+
+    //     break;
+    //   default:
+    // }
+  }
+
+  void playVideo(Video videoToPlay) {
+    if (videoToPlay.isYoutube) {
+      final videoId = YoutubePlayer.convertUrlToId(
+        videoToPlay.youtubeUrl!,
+      );
+
+      if (videoId == null) {
+        showSnackMessage(context, "This video contains an invalid youtube url",
+            error: true);
+
+        return;
+      }
+
+      _youtubePlayerController!.load(videoId);
+
+      setState(() {
+        video = videoToPlay;
+      });
+
+      log.f("ABOOUT TO DEBOUNCE");
+
+      confirmVideoIsPlaying();
+    }
+  }
+
+  void confirmVideoIsPlaying() {
+    Future.delayed(const Duration(seconds: 30), () {
+      if (_youtubePlayerController != null &&
+          _youtubePlayerController?.value.playerState != PlayerState.playing) {
+        if (!mounted) return;
+        showSnackMessage(
+          context,
+          "This video is taking too long to load, please check your internet connection or keep waiting",
+        );
+      }
+    });
   }
 
   @override
@@ -282,25 +331,7 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
 
                                   return;
                                 }
-                                if (newVideo.isYoutube) {
-                                  final videoId = YoutubePlayer.convertUrlToId(
-                                    newVideo.youtubeUrl!,
-                                  );
-
-                                  if (videoId == null) {
-                                    showSnackMessage(context,
-                                        "This video contains an invalid youtube url",
-                                        error: true);
-
-                                    return;
-                                  }
-
-                                  _youtubePlayerController!.load(videoId);
-
-                                  setState(() {
-                                    video = newVideo;
-                                  });
-                                }
+                                playVideo(newVideo);
                               })),
                       SliverToBoxAdapter(
                           child: SizedBox(

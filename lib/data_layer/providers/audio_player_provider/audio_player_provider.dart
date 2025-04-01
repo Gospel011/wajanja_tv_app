@@ -10,8 +10,8 @@ class AudioPlayerNotifier extends Notifier<AudioPlayerState> {
   AudioPlayer? _currentPlayer;
   @override
   build() {
-    log.f("AUDIOBOOK NOTIFIER BUILD CALLED");
-    log.f("CURRENT NOTIFER PLAYER: $_currentPlayer");
+    log.i("AUDIOBOOK NOTIFIER BUILD CALLED");
+    log.i("CURRENT NOTIFER PLAYER: $_currentPlayer");
 
     return AudioPlayerState(
       player: _player,
@@ -21,7 +21,7 @@ class AudioPlayerNotifier extends Notifier<AudioPlayerState> {
   }
 
   void refresh() {
-    log.f("REFRESH CALLED");
+    log.i("REFRESH CALLED");
     state = state.copyWith();
   }
 

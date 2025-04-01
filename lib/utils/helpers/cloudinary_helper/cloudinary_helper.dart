@@ -69,7 +69,7 @@ class CloudinaryHelper {
 
     final extractedId = last.first;
 
-    log.f("EXTRACTED ID: $extractedId");
+    log.i("EXTRACTED ID: $extractedId");
 
     return extractedId;
   }

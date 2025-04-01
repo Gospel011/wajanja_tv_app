@@ -71,7 +71,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
           .updateAudiobook(audiobook: audiobook!);
     });
 
-    log.f("BOOK FROM STATE: ${audiobookState.audiobook} $audiobook");
+    log.i("BOOK FROM STATE: ${audiobookState.audiobook} $audiobook");
 
     final bool isAudiobook = audiobookState.audiobook == audiobook;
 
@@ -91,10 +91,10 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
             ),
           );
 
-    log.f("IS BOOK: $isAudiobook");
+    log.i("IS BOOK: $isAudiobook");
 
     if (!isAudiobook) {
-      log.f("PLAYINGJ");
+      log.i("PLAYINGJ");
       player
         ..setAudioSource(
           playlist,
@@ -104,7 +104,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
         ..setVolume(1)
         ..play();
     } else {
-      log.f("SKIP PLAYING");
+      log.i("SKIP PLAYING");
     }
   }
 

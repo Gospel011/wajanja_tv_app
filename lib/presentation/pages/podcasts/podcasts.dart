@@ -45,7 +45,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
           if (playerState.playing) {
             // _currentPlayer = player;
 
-            log.f("PLAYING STARTED");
+            log.i("PLAYING STARTED");
 
             ref
                 .read(audioPlayerNotifierProvider.notifier)
@@ -55,7 +55,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
       );
     });
 
-    log.f("CALLED PODCASTS INITSTATE");
+    log.i("CALLED PODCASTS INITSTATE");
   }
 
   @override
@@ -68,7 +68,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
   Widget build(BuildContext context) {
     ref.watch(audioPlayerNotifierProvider);
 
-    log.f("PODCASTS BUILD METHOD CALLED");
+    log.i("PODCASTS BUILD METHOD CALLED");
 
     return Scaffold(
       appBar: buildAppBar(context, ref: ref, title: "Podcasts"),
@@ -108,22 +108,22 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                             isPlaying: isPlaying,
                             onTap: () {
                               log.i("Handle toggle playing");
-                      
+
                               ref
                                   .read(audioPlayerNotifierProvider)
                                   .audiobookPlayer
                                   .pause();
-                      
+
                               final canLoadUrl =
                                   (player.audioSource as UriAudioSource?)
                                           ?.uri
                                           .toString() !=
                                       podcast.url;
-                      
+
                               log.i("CAN LOAD URL: $canLoadUrl");
-                      
+
                               // return;
-                      
+
                               setState(() {
                                 currentIndex = index;
                                 if (isPlaying) {
@@ -136,7 +136,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                               });
                             },
                           ),
-                      
+
                           Expanded(
                             child: Column(
                               spacing: 32.h,
@@ -160,7 +160,8 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                                 if (isExpanded)
                                   Column(
                                     spacing: 32.h,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         podcast.title,
@@ -186,7 +187,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                               ],
                             ),
                           ),
-                      
+
                           SizedBox(
                             height: 64.h,
                             child: Row(
@@ -207,9 +208,9 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                           )
                         ],
                       ),
-
-
-                      Divider(color: colorScheme.secondaryContainer,)
+                      Divider(
+                        color: colorScheme.secondaryContainer,
+                      )
                     ],
                   ),
                 ).pSymmetric(horizontal: 0, vertical: 16.h),

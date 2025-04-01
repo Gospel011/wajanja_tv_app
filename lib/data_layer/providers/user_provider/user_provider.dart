@@ -26,7 +26,7 @@ class UserNotifier extends Notifier<UserState> {
     state = state.copyWith(state: UserStates.upsertingUser);
 
     try {
-      log.f("MAKING REQUEST: ${user.userName != null}");
+      log.i("MAKING REQUEST: ${user.userName != null}");
       if (user.userName != null) {
         final response = await usersRef
             .where(
@@ -36,13 +36,13 @@ class UserNotifier extends Notifier<UserState> {
             .limit(1)
             .get();
 
-        log.f("RESPONSE IS NOT EMPTY: ${response.docs.isNotEmpty}");
+        log.i("RESPONSE IS NOT EMPTY: ${response.docs.isNotEmpty}");
 
         if (response.docs.isNotEmpty) {
           final userDoc = response.docs.first.data();
 
-          log.f("USER DOC: $userDoc");
-          log.f("USER TO UPDATE DOC: $user");
+          log.i("USER DOC: $userDoc");
+          log.i("USER TO UPDATE DOC: $user");
 
           if (userDoc.email != user.email) {
             state = state.copyWith(
@@ -67,14 +67,14 @@ class UserNotifier extends Notifier<UserState> {
 
         if (user.photoURL != null) {
           // try {
-            await CloudinaryHelper.instance.delete(user.photoURL!);
+          await CloudinaryHelper.instance.delete(user.photoURL!);
           // } catch (e) {
-          //   log.f(e);
+          //   log.i(e);
           // }
         }
       }
 
-      log.f("PHOTO URL: $photoUrl");
+      log.i("PHOTO URL: $photoUrl");
 
       // return;
       await usersRef
