@@ -41,6 +41,8 @@ class _OnboardingState extends ConsumerState<Onboarding>
     ref.listen(
       authNotifierProvider,
       (previous, next) {
+
+        log.f("AUTH STATE:  $next");
         switch (next.states) {
           case AuthStates.signingInWithGoogleSuccessful:
             context.goNamed(AppRoutes.home.name);
