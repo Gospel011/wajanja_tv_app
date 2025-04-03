@@ -138,7 +138,7 @@ class Video {
 
   @override
   String toString() {
-    return 'Video(title: $title, description: $description, coverPhotoPortrait: $coverPhotoPortrait, postedBy: $postedBy, url: $url, youtubeUrl: $youtubeUrl, vimeoUrl: $vimeoUrl, category: $category, likes: $likes, country: $country, city: $city, createdAt: $createdAt)';
+    return 'Video(title: $title, coverPhotoPortrait: $coverPhotoPortrait, postedBy: $postedBy, url: $url, youtubeUrl: $youtubeUrl, vimeoUrl: $vimeoUrl, category: $category, likes: $likes, country: $country, city: $city, createdAt: $createdAt)';
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:wajanja/presentation/widgets/scrollable_row.dart';
 import 'package:wajanja/presentation/widgets/video_widget.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 
 class VideoRow extends StatelessWidget {
   const VideoRow({
@@ -47,6 +48,7 @@ class VideoRow extends StatelessWidget {
                 height: 300.h,
                 onTap: () {
                   if (onVideoTap != null) {
+                    log.f("VIDEO: $video");
                     onVideoTap!(video);
                     return;
                   }
