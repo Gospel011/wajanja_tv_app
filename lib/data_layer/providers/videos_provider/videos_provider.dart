@@ -83,9 +83,41 @@ class VideosNotifier extends Notifier<VideosState> with FirebaseQueryMixin {
     } else {
       // add email
       video.docRef.update({
-        'likes': FieldValue.arrayUnion([loggedInUser.email!])
+        'likes': FieldValue.arrayUnion([loggedInUser.email!]),
+        'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return video.copyWith(likes: [...video.likes, loggedInUser.email!]);
+      return video.copyWith(
+          likes: [...video.likes, loggedInUser.email!],
+          dislikes:
+              video.dislikes.where((el) => el != loggedInUser.email!).toList());
+    }
+  }
+
+  Future<Video?> dislikeVideo(Video video) async {
+    final loggedInUser = _authState.user;
+
+    log.f("disliking...: ${loggedInUser?.email}");
+
+    if (loggedInUser == null) return null;
+
+    if (video.dislikes.contains(loggedInUser.email)) {
+      // remove email
+      video.docRef.update({
+        'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
+      });
+      return video.copyWith(
+          dislikes:
+              video.dislikes.where((el) => el != loggedInUser.email!).toList());
+    } else {
+      // add email
+      video.docRef.update({
+        'dislikes': FieldValue.arrayUnion([loggedInUser.email!]),
+        'likes': FieldValue.arrayRemove([loggedInUser.email!])
+      });
+
+      return video.copyWith(
+          dislikes: [...video.dislikes, loggedInUser.email!],
+          likes: video.likes.where((el) => el != loggedInUser.email!).toList());
     }
   }
 }

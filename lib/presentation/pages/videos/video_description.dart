@@ -12,6 +12,8 @@ import 'package:wajanja/presentation/components/my_video_player.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
 import 'package:wajanja/presentation/widgets/my_expandable_text.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
+import 'package:wajanja/utils/constants/enums.dart';
+import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
@@ -205,7 +207,7 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                       if (video!.description != null)
                         SliverToBoxAdapter(
                             child: Text(
-                          video!.title,
+                          video!.title.capitalize,
                           style: Theme.of(context)
                               .textTheme
                               .headlineMedium
@@ -232,7 +234,6 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                                     ? colorScheme.primary
                                     : colorScheme.secondaryContainer,
                                 onTap: () async {
-                                  log.f("ABOUT TO LIKE");
                                   if (video == null) return;
 
                                   final newVideo = await ref
@@ -253,23 +254,18 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                                 backgroundColor: disliked
                                     ? colorScheme.primary
                                     : colorScheme.secondaryContainer,
-                                onTap: () {
-                                  setState(() {
-                                    if (disliked) {
-                                      video = video!.copyWith(
-                                        dislikes: video!.dislikes
-                                            .where((el) => el != user!.email)
-                                            .toList(),
-                                      );
-                                    } else {
-                                      video = video!.copyWith(
-                                          likes: video!.likes
-                                              .where((el) => el != user!.email)
-                                              .toList(),
-                                          dislikes: video!.likes
-                                            ..add(user!.email!));
-                                    }
-                                  });
+                                onTap: () async {
+                                  if (video == null) return;
+
+                                  final newVideo = await ref
+                                      .read(videosNotifierProvider.notifier)
+                                      .dislikeVideo(video!);
+
+                                  if (newVideo != null) {
+                                    setState(() {
+                                      video = newVideo;
+                                    });
+                                  }
                                 },
                               ),
                               IconContainer(

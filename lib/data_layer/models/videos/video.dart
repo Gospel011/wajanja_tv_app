@@ -76,6 +76,7 @@ class Video {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'docRef': docRef,
       'title': title,
       'description': description,
       'coverPhotoPortrait': coverPhotoPortrait,

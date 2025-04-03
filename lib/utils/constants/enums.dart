@@ -293,6 +293,13 @@ enum UserStates {
   upsertingUserFailed,
 }
 
+enum VideoTooglePaths {
+  likes,
+  dislikes;
+
+  String get describe => name;
+}
+
 enum CollectionPaths {
   users('users'),
   videos('videos'),
