@@ -119,6 +119,11 @@ mixin FirebaseQueryMixin {
       {required dynamic Function(Map<String, dynamic> object) toObject}) {
     final res = Future.wait(docs.map((el) async {
       final data = el.data();
+
+      log.f("VIDEO REF: ${el.reference}");
+
+      data['docRef'] = el.reference;
+
       data[field] =
           (await (data[field] as DocumentReference<Map<String, dynamic>>)
               .get());

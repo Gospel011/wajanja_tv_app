@@ -27,7 +27,7 @@ class MySwitchListTile extends ConsumerWidget with StatelessThemesMixin {
         onChanged(!value);
       },
       trailing: CupertinoSwitch(
-        value: ref.watch(themeProvider.notifier).isDark(context),
+        value: value,// ref.watch(themeProvider.notifier).isDark(context),
         onChanged: onChanged,
         // onChanged: (_) {
         //   ref.read(themeProvider.notifier).toggleTheme(context);

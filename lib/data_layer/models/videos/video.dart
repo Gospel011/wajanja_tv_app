@@ -2,12 +2,13 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 
 class Video {
+  final DocumentReference<Map<String, dynamic>> docRef;
   final String title;
   final String? description;
   final String? coverPhotoPortrait;
@@ -22,6 +23,7 @@ class Video {
   final String city;
   final Timestamp createdAt;
   Video({
+    required this.docRef,
     required this.title,
     this.description,
     this.coverPhotoPortrait,
@@ -55,6 +57,7 @@ class Video {
     Timestamp? createdAt,
   }) {
     return Video(
+      docRef: docRef,
       title: title ?? this.title,
       description: description ?? this.description,
       coverPhotoPortrait: coverPhotoPortrait ?? this.coverPhotoPortrait,
@@ -106,6 +109,7 @@ class Video {
     //     ((map['postedBy'] as DocumentReference<Map<String, dynamic>>).get());
     // .data();
     return Video(
+      docRef: map['docRef'] as DocumentReference<Map<String, dynamic>>,
       title: map['title'] as String,
       description: map['description'] as String?,
       coverPhotoPortrait: map['coverphotoPortrait'] as String?,
@@ -139,37 +143,36 @@ class Video {
   @override
   bool operator ==(covariant Video other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.title == title &&
-      other.description == description &&
-      other.coverPhotoPortrait == coverPhotoPortrait &&
-      other.postedBy == postedBy &&
-      other.url == url &&
-      other.youtubeUrl == youtubeUrl &&
-      other.vimeoUrl == vimeoUrl &&
-      other.category == category &&
-      // listEquals(other.likes, likes) &&
-      // listEquals(other.dislikes, dislikes) &&
-      // other.country == country &&
-      // other.city == city &&
-      other.createdAt == createdAt;
+
+    return other.title == title &&
+        other.description == description &&
+        other.coverPhotoPortrait == coverPhotoPortrait &&
+        other.postedBy == postedBy &&
+        other.url == url &&
+        other.youtubeUrl == youtubeUrl &&
+        other.vimeoUrl == vimeoUrl &&
+        other.category == category &&
+        // listEquals(other.likes, likes) &&
+        // listEquals(other.dislikes, dislikes) &&
+        // other.country == country &&
+        // other.city == city &&
+        other.createdAt == createdAt;
   }
 
   @override
   int get hashCode {
     return title.hashCode ^
-      description.hashCode ^
-      coverPhotoPortrait.hashCode ^
-      postedBy.hashCode ^
-      url.hashCode ^
-      youtubeUrl.hashCode ^
-      vimeoUrl.hashCode ^
-      category.hashCode ^
-      // likes.hashCode ^
-      // dislikes.hashCode ^
-      // country.hashCode ^
-      // city.hashCode ^
-      createdAt.hashCode;
+        description.hashCode ^
+        coverPhotoPortrait.hashCode ^
+        postedBy.hashCode ^
+        url.hashCode ^
+        youtubeUrl.hashCode ^
+        vimeoUrl.hashCode ^
+        category.hashCode ^
+        // likes.hashCode ^
+        // dislikes.hashCode ^
+        // country.hashCode ^
+        // city.hashCode ^
+        createdAt.hashCode;
   }
 }

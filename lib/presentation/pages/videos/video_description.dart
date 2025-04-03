@@ -6,6 +6,7 @@ import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
+import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
 import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/my_video_player.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
@@ -177,7 +178,7 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
   Widget build(BuildContext context) {
     log.i("Video: ${video?.title}");
     log.i("widget video: ${widget.video?.title}");
-    log.f("VIDEO URL: ${widget.video?.youtubeUrl}");
+    log.i("VIDEO URL: ${widget.video?.youtubeUrl}");
     return Scaffold(
       body: video == null
           ? Center(
@@ -230,23 +231,19 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                                 backgroundColor: liked
                                     ? colorScheme.primary
                                     : colorScheme.secondaryContainer,
-                                onTap: () {
-                                  setState(() {
-                                    if (liked) {
-                                      video = video!.copyWith(
-                                        likes: video!.likes
-                                            .where((el) => el != user!.email)
-                                            .toList(),
-                                      );
-                                    } else {
-                                      video = video!.copyWith(
-                                        dislikes: video!.dislikes
-                                            .where((el) => el != user!.email)
-                                            .toList(),
-                                        likes: video!.likes..add(user!.email!),
-                                      );
-                                    }
-                                  });
+                                onTap: () async {
+                                  log.f("ABOUT TO LIKE");
+                                  if (video == null) return;
+
+                                  final newVideo = await ref
+                                      .read(videosNotifierProvider.notifier)
+                                      .likeVideo(video!);
+
+                                  if (newVideo != null) {
+                                    setState(() {
+                                      video = newVideo;
+                                    });
+                                  }
                                 },
                               ),
                               IconContainer(
@@ -319,21 +316,43 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                           child: SizedBox(
                         height: 28.h,
                       )),
-                      SliverToBoxAdapter(
-                          child: VideoRow(
-                              title: "Next up",
-                              videos: videos,
-                              maxLength: 4,
-                              onVideoTap: (newVideo) {
-                                if (video == newVideo) {
-                                  log.i(
-                                    "RETURNING SINCE SAME VIDEO WAS CLICKED",
-                                  );
+                      SliverToBoxAdapter(child: Builder(builder: (context) {
+                        final nextVideosList = ref
+                            .read(videosNotifierProvider)
+                            .videos
+                            .sublist(ref
+                                    .read(videosNotifierProvider)
+                                    .videos
+                                    .indexOf(video!) +
+                                1);
 
-                                  return;
-                                }
-                                playVideo(newVideo);
-                              })),
+                        late final List<Video> nextVideos;
+
+                        if (nextVideosList.isNotEmpty) {
+                          nextVideos = nextVideosList;
+                        } else {
+                          nextVideos = [
+                            ...ref.read(videosNotifierProvider).videos
+                          ]..shuffle();
+                        }
+
+                        nextVideos.removeWhere((el) => el == video);
+
+                        return VideoRow(
+                            title: "Next up",
+                            videos: nextVideos,
+                            maxLength: 4,
+                            onVideoTap: (newVideo) {
+                              if (video == newVideo) {
+                                log.i(
+                                  "RETURNING SINCE SAME VIDEO WAS CLICKED",
+                                );
+
+                                return;
+                              }
+                              playVideo(newVideo);
+                            });
+                      })),
                       SliverToBoxAdapter(
                           child: SizedBox(
                         height: 24.h,
