@@ -177,6 +177,7 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
   Widget build(BuildContext context) {
     log.i("Video: ${video?.title}");
     log.i("widget video: ${widget.video?.title}");
+    log.f("VIDEO URL: ${widget.video?.youtubeUrl}");
     return Scaffold(
       body: video == null
           ? Center(

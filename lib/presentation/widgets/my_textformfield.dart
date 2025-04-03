@@ -4,7 +4,6 @@ import 'package:wajanja/presentation/widgets/section_text.dart';
 import 'package:wajanja/utils/constants/app_colors.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 
-
 class MyTextFormField extends StatelessWidget {
   /// This is used to access the user's input
   final TextEditingController controller;
@@ -72,34 +71,37 @@ class MyTextFormField extends StatelessWidget {
   final InputBorder? errorBorder;
   final int? minLines;
   final String? prefixText;
+  final void Function(String value)? onFieldSubmitted;
+  final TextInputAction? textInputAction;
 
-  const MyTextFormField({
-    super.key,
-    this.hintText,
-    this.onTap,
-    required this.controller,
-    required this.validator,
-    this.prefixText,
-    this.minLines,
-    this.padding,
-    this.sectionText,
-    this.sectionTextFontWeight,
-    this.maxLines,
-    this.contentPadding,
-    this.suffixIcon,
-    this.suffixOnpressed,
-    this.obscureText = false,
-    this.readOnly,
-    this.enabled,
-    this.keyboardType,
-    this.inputFormatters,
-    this.focusNode,
-    this.onChanged,
-    this.enabledBorder,
-    this.focusedBorder,
-    this.errorBorder,
-    this.textFieldType,
-  });
+  const MyTextFormField(
+      {super.key,
+      this.hintText,
+      this.onTap,
+      required this.controller,
+      required this.validator,
+      this.prefixText,
+      this.minLines,
+      this.padding,
+      this.sectionText,
+      this.sectionTextFontWeight,
+      this.onFieldSubmitted,
+      this.maxLines,
+      this.contentPadding,
+      this.suffixIcon,
+      this.suffixOnpressed,
+      this.obscureText = false,
+      this.readOnly,
+      this.enabled,
+      this.keyboardType,
+      this.inputFormatters,
+      this.focusNode,
+      this.onChanged,
+      this.enabledBorder,
+      this.focusedBorder,
+      this.errorBorder,
+      this.textFieldType,
+      this.textInputAction});
 
   @override
   Widget build(BuildContext context) {
@@ -123,48 +125,43 @@ class MyTextFormField extends StatelessWidget {
             onChanged: onChanged,
             controller: controller,
             validator: validator,
-
+            textInputAction: textInputAction,
+            onFieldSubmitted: onFieldSubmitted,
             style: Theme.of(context).inputDecorationTheme.hintStyle?.copyWith(
-              color:
-                  Theme.of(context).brightness == Brightness.dark
+                  color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.bgLight
                       : AppColors.gray700,
-            ),
+                ),
             cursorColor: Theme.of(context).textTheme.bodyMedium?.color,
-            textAlign:
-                textFieldType == TextFieldType.otp
-                    ? TextAlign.center
-                    : TextAlign.start,
-            keyboardType:
-                textFieldType == TextFieldType.otp
-                    ? TextInputType.number
-                    : (hintText?.toLowerCase().contains('email') == true) ||
+            textAlign: textFieldType == TextFieldType.otp
+                ? TextAlign.center
+                : TextAlign.start,
+            keyboardType: textFieldType == TextFieldType.otp
+                ? TextInputType.number
+                : (hintText?.toLowerCase().contains('email') == true) ||
                         (sectionText?.toLowerCase().contains('email') == true)
                     ? TextInputType.emailAddress
                     : keyboardType,
             cursorWidth: 1.0,
             decoration: InputDecoration(
-              contentPadding:
-                  textFieldType == TextFieldType.otp
-                      ? const EdgeInsets.symmetric(horizontal: 8)
-                      : contentPadding,
+              contentPadding: textFieldType == TextFieldType.otp
+                  ? const EdgeInsets.symmetric(horizontal: 8)
+                  : contentPadding,
               hintText: hintText,
               prefixText: prefixText,
-              suffixIcon:
-                  suffixIcon != null
-                      ? IconButton(
-                        onPressed: suffixOnpressed,
-                        icon: suffixIcon!,
-                      )
-                      : null,
+              suffixIcon: suffixIcon != null
+                  ? IconButton(
+                      onPressed: suffixOnpressed,
+                      icon: suffixIcon!,
+                    )
+                  : null,
             ),
-            inputFormatters:
-                textFieldType == TextFieldType.otp
-                    ? [
-                      LengthLimitingTextInputFormatter(1),
-                      FilteringTextInputFormatter.digitsOnly,
-                    ]
-                    : inputFormatters,
+            inputFormatters: textFieldType == TextFieldType.otp
+                ? [
+                    LengthLimitingTextInputFormatter(1),
+                    FilteringTextInputFormatter.digitsOnly,
+                  ]
+                : inputFormatters,
           ),
         ],
       ),

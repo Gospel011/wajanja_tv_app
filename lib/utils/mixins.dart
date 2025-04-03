@@ -15,6 +15,7 @@ import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/my_dialog.dart';
 import 'package:wajanja/presentation/widgets/profile_picture.dart';
 import 'package:wajanja/presentation/widgets/spaced_column.dart';
+import 'package:wajanja/utils/constants/app_constants.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 
@@ -108,6 +109,29 @@ mixin ImageMixin {
         ),
       ],
     );
+  }
+}
+
+mixin PaginationMixin {
+  int calculatePage(
+      {required int itemCount, int pageSize = AppConstants.pageLimit}) {
+    int currentPage = pageSize == 0 ? 0 : (itemCount / pageSize).floor();
+
+    ++currentPage;
+
+    return currentPage;
+  }
+
+  void paginationScrollControllerListener(ScrollController scrollController,
+      {required void Function() onBottomReached}) {
+    if (scrollController.position.atEdge) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        onBottomReached();
+      } else {
+        log.i("At top");
+      }
+    }
   }
 }
 

@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
+import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
 import 'package:wajanja/presentation/pages/videos/video_description.dart';
+import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
@@ -31,6 +34,7 @@ class _HomeState extends ConsumerState<Home> with ThemesMixin {
   @override
   Widget build(BuildContext context) {
     final audioPlayerState = ref.watch(audioPlayerNotifierProvider);
+    final videosState = ref.watch(videosNotifierProvider);
 
     return Scaffold(
       floatingActionButton: audioPlayerState.currentPlayer != null
@@ -86,6 +90,24 @@ class _HomeState extends ConsumerState<Home> with ThemesMixin {
           ),
         ],
       ).pOnly(left: 0, right: 0, top: 0, bottom: 24.h),
+      // body: SingleChildScrollView(
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     spacing: 24.h,
+      //     children: [
+      //       Text(videosState.states.name),
+      //       Text("${videosState.videos}"),
+      //       MyElevatedButton(
+      //         text: "Fetch Videos",
+      //         onPressed: () {
+      //           ref
+      //               .read(videosNotifierProvider.notifier)
+      //               .fetchVideos(countryCode: "NG");
+      //         },
+      //       ),
+      //     ],
+      //   ),
+      // ),
       body: widget.shell,
     );
   }

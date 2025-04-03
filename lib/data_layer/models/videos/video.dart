@@ -2,14 +2,16 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 
 class Video {
   final String title;
   final String? description;
   final String? coverPhotoPortrait;
-  final String postedBy;
+  final User postedBy;
   final String? url;
   final String? youtubeUrl;
   final String? vimeoUrl;
@@ -41,7 +43,7 @@ class Video {
     String? title,
     String? description,
     String? coverPhotoPortrait,
-    String? postedBy,
+    User? postedBy,
     String? url,
     String? youtubeUrl,
     String? vimeoUrl,
@@ -74,7 +76,9 @@ class Video {
       'title': title,
       'description': description,
       'coverPhotoPortrait': coverPhotoPortrait,
-      'postedBy': postedBy,
+      'postedBy': FirebaseFirestore.instance
+          .collection('users')
+          .doc('users/${postedBy.email!}'),
       'url': url,
       'youtubeUrl': youtubeUrl,
       'vimeoUrl': vimeoUrl,
@@ -83,12 +87,12 @@ class Video {
       'dislikes': dislikes,
       'country': country,
       'city': city,
-      'createdAt': createdAt.toDate().toIso8601String(),
+      'createdAt': createdAt,
     };
   }
 
   factory Video.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions options) {
+      {SnapshotOptions? options}) {
     final data = snapshot.data();
 
     return Video.fromMap(data!);
@@ -97,11 +101,18 @@ class Video {
   Map<String, dynamic> toFirestore() => toMap();
 
   factory Video.fromMap(Map<String, dynamic> map) {
+    // final data = snapshot.data() ?? {};
+    // map['postedBy'] =
+    //     ((map['postedBy'] as DocumentReference<Map<String, dynamic>>).get());
+    // .data();
     return Video(
       title: map['title'] as String,
       description: map['description'] as String?,
-      coverPhotoPortrait: map['coverPhotoPortrait'] as String?,
-      postedBy: map['postedBy'] as String,
+      coverPhotoPortrait: map['coverphotoPortrait'] as String?,
+      postedBy: User.fromFirestore(
+        map['postedBy'] as DocumentSnapshot<Map<String, dynamic>>,
+        null,
+      ),
       url: map['url'] as String?,
       youtubeUrl:
           map['youtubeUrl'] != null ? map['youtubeUrl'] as String : null,
@@ -111,7 +122,7 @@ class Video {
       dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
       country: map['country'] as String,
       city: map['city'] as String,
-      createdAt: Timestamp.fromDate(DateTime.parse(map['createdAt'] as String)),
+      createdAt: map['createdAt'],
     );
   }
 
@@ -131,16 +142,34 @@ class Video {
   
     return 
       other.title == title &&
+      other.description == description &&
+      other.coverPhotoPortrait == coverPhotoPortrait &&
+      other.postedBy == postedBy &&
       other.url == url &&
       other.youtubeUrl == youtubeUrl &&
-      other.vimeoUrl == vimeoUrl;
+      other.vimeoUrl == vimeoUrl &&
+      other.category == category &&
+      // listEquals(other.likes, likes) &&
+      // listEquals(other.dislikes, dislikes) &&
+      // other.country == country &&
+      // other.city == city &&
+      other.createdAt == createdAt;
   }
 
   @override
   int get hashCode {
     return title.hashCode ^
+      description.hashCode ^
+      coverPhotoPortrait.hashCode ^
+      postedBy.hashCode ^
       url.hashCode ^
       youtubeUrl.hashCode ^
-      vimeoUrl.hashCode;
+      vimeoUrl.hashCode ^
+      category.hashCode ^
+      // likes.hashCode ^
+      // dislikes.hashCode ^
+      // country.hashCode ^
+      // city.hashCode ^
+      createdAt.hashCode;
   }
 }

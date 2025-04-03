@@ -4,4 +4,6 @@ class AppConstants {
   static final int passwordLowerLimit = 8;
 
   static double defaultPadding = 16.w;
+
+  static const int pageLimit = 2;
 }
