@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -109,6 +110,23 @@ mixin ImageMixin {
         ),
       ],
     );
+  }
+}
+
+mixin FirebaseQueryMixin {
+  Future<List<dynamic>> populateDocsField(
+      String field, List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+      {required dynamic Function(Map<String, dynamic> object) toObject}) {
+    final res = Future.wait(docs.map((el) async {
+      final data = el.data();
+      data[field] =
+          (await (data[field] as DocumentReference<Map<String, dynamic>>)
+              .get());
+
+      return toObject(data);
+    }));
+
+    return res;
   }
 }
 

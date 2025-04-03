@@ -5,5 +5,5 @@ class AppConstants {
 
   static double defaultPadding = 16.w;
 
-  static const int pageLimit = 2;
+  static const int pageLimit = 10;
 }
