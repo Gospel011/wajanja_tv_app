@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart';
+import 'package:wajanja/presentation/widgets/my_switch_list_tile.dart';
 
 
 
@@ -15,17 +16,17 @@ class ThemeControllers extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 20,
           children: [
-            SwitchListTile.adaptive(
+            MySwitchListTile(
               value: ref.watch(themeProvider.notifier).isDark(context),
-              title: Text("Use dark theme"),
+              leading: Text("Use dark theme"),
               onChanged: (_) {
                 ref.read(themeProvider.notifier).toggleTheme(context);
               },
             ),
 
-            SwitchListTile.adaptive(
+            MySwitchListTile(
               value: ref.watch(themeProvider.notifier).isUsingSystemTheme(),
-              title: Text("Use system theme"),
+              leading: Text("Use system theme"),
               onChanged: (value) {
                 ref.read(themeProvider.notifier).toggleSystemTheme(context);
               },

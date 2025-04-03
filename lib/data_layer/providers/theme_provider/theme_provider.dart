@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wajanja/data_layer/providers/theme_provider/theme_state.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 
 class ThemeNotifier extends Notifier<ThemeState> {
   // ThemeNotifier() : super(ThemeState(themeMode: ThemeMode.system));
@@ -31,6 +32,9 @@ class ThemeNotifier extends Notifier<ThemeState> {
 
   void toggleSystemTheme(context) {
     final brightness = Theme.of(context).brightness;
+
+    log.f("BRIGHTNESS: $brightness");
+    log.f("THEME MODE: ${state.themeMode}");
 
     state = state.copyWith(
       themeMode: state.themeMode == ThemeMode.system
