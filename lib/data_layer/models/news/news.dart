@@ -80,12 +80,12 @@ class News {
         map['postedBy'] as DocumentSnapshot<Map<String, dynamic>>,
         null,
       ),
+      likes: List<String>.from((map['likes'] as List<dynamic>)),
+      dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
       coverPhoto: map['coverphoto'] as String,
       title: map['title'] as String,
       createdAt: map['createdAt'] as Timestamp,
       category: NewsCategory.fromString(map['category'] as String),
-      likes: List<String>.from((map['likes'] as List<dynamic>)),
-      dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
       sections: List<NewsSection>.from(
         (map['sections'] as List<dynamic>).map<NewsSection>(
           (x) => NewsSection.fromMap(x as Map<String, dynamic>),

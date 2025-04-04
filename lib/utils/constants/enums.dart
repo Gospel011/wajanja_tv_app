@@ -423,6 +423,13 @@ enum AudiobooksStates {
   fetchingAudiobooksFailed,
 }
 
+enum PodcastStates {
+  initial,
+  fetchingPodcasts,
+  podcastsFetched,
+  fetchingPodcastsFailed,
+}
+
 enum PodcastGenre {
   arts,
   business,
@@ -462,6 +469,7 @@ enum PodcastGenre {
   documentary,
   personal_journals,
   philosophy,
+  
   relationships,
   mental_health,
   alternative_health,

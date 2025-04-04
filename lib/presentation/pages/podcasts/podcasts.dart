@@ -6,12 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wajanja/data_layer/models/podcast/podcast.dart';
+import 'package:wajanja/data_layer/models/search/search.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
+import 'package:wajanja/data_layer/providers/podcasts_provider/podcast_provider.dart';
 import 'package:wajanja/my_tests/sample_podcasts.dart';
 import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
+import 'package:wajanja/presentation/widgets/loading_states_widget.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
+import 'package:wajanja/presentation/widgets/my_search_bar.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
+import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -25,17 +30,50 @@ class PodcastsPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastsPageState extends ConsumerState<PodcastsPage>
-    with AppBarMixin, ThemesMixin {
+    with AppBarMixin, ThemesMixin, PaginationMixin {
   int? currentIndex;
   bool? expanded;
 
   late final AudioPlayer player; // = AudioPlayer();
   late final StreamSubscription<PlayerState> subscription;
 
+  Search search = Search();
+
+  ScrollController scrollController = ScrollController();
+  final TextEditingController searchController = TextEditingController();
+
+  int get page => calculatePage(
+      itemCount: ref.read(podcastNotifierProvider).podcasts.length);
+
+  void searchPodcasts(String text, Search searchObj, {bool newSearch = false}) {
+    ref.read(podcastNotifierProvider.notifier).fetchPodcasts(
+          query: text,
+          countryCode: searchObj.country.code,
+          newSearch: newSearch,
+          page: page,
+        );
+  }
+
   @override
   void initState() {
     super.initState();
     // player = AudioPlayerController.instance.player;
+
+    scrollController.addListener(() {
+      paginationScrollControllerListener(scrollController, onBottomReached: () {
+        log.i("At bottom");
+
+        log.f("REQUESTING LODGES FOR PAGE: $page");
+
+        searchPodcasts(searchController.text.trim(), search);
+      });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(podcastNotifierProvider.notifier)
+          .fetchPodcasts(countryCode: search.country.code);
+    });
 
     player = ref.read(audioPlayerNotifierProvider).player;
 
@@ -67,16 +105,34 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
   @override
   Widget build(BuildContext context) {
     ref.watch(audioPlayerNotifierProvider);
+    final podcastsState = ref.watch(podcastNotifierProvider);
 
     log.i("PODCASTS BUILD METHOD CALLED");
 
     return Scaffold(
       appBar: buildAppBar(context, ref: ref, title: "Podcasts"),
       body: CustomScrollView(
+        controller: scrollController,
         slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 30.h,
+            ),
+          ),
+          SliverToBoxAdapter(
+              child: MySearchBar(
+            search: search,
+            searchController: searchController,
+            onSearch: searchPodcasts,
+          ).pSymmetric()),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 32.h,
+            ),
+          ),
           SliverList.builder(
             itemBuilder: (context, index) {
-              final podcast = podcasts.elementAt(index);
+              final podcast = podcastsState.podcasts.elementAt(index);
               final isExpanded = currentIndex == index && expanded == true;
               final isPlaying = currentIndex == index && player.playing;
 
@@ -216,8 +272,12 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                 ).pSymmetric(horizontal: 0, vertical: 16.h),
               );
             },
-            itemCount: podcasts.length,
-          ).spOnly(left: 16.w, right: 16.w, bottom: 20.h)
+            itemCount: podcastsState.podcasts.length,
+          ).spOnly(left: 16.w, right: 16.w, bottom: 20.h),
+          LoadingStatesWidget(
+              isLoading: podcastsState.states == PodcastStates.fetchingPodcasts,
+              isEmpty: podcastsState.podcasts.isEmpty,
+              emptyText: "No podcasts found in ${search.country.name}")
         ],
       ),
     );
