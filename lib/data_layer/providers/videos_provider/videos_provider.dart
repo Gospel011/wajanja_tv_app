@@ -73,12 +73,14 @@ class VideosNotifier extends Notifier<VideosState> with FirebaseQueryMixin {
 
     if (loggedInUser == null) return null;
 
+    late Video newVideo;
+
     if (video.likes.contains(loggedInUser.email)) {
       // remove email
       video.docRef.update({
         'likes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return video.copyWith(
+      newVideo = video.copyWith(
           likes: video.likes.where((el) => el != loggedInUser.email!).toList());
     } else {
       // add email
@@ -86,11 +88,15 @@ class VideosNotifier extends Notifier<VideosState> with FirebaseQueryMixin {
         'likes': FieldValue.arrayUnion([loggedInUser.email!]),
         'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return video.copyWith(
+      newVideo = video.copyWith(
           likes: [...video.likes, loggedInUser.email!],
           dislikes:
               video.dislikes.where((el) => el != loggedInUser.email!).toList());
     }
+
+    updateVideoLocally(newVideo);
+
+    return newVideo;
   }
 
   Future<Video?> dislikeVideo(Video video) async {
@@ -100,12 +106,14 @@ class VideosNotifier extends Notifier<VideosState> with FirebaseQueryMixin {
 
     if (loggedInUser == null) return null;
 
+    late Video newVideo;
+
     if (video.dislikes.contains(loggedInUser.email)) {
       // remove email
       video.docRef.update({
         'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return video.copyWith(
+      newVideo = video.copyWith(
           dislikes:
               video.dislikes.where((el) => el != loggedInUser.email!).toList());
     } else {
@@ -115,10 +123,21 @@ class VideosNotifier extends Notifier<VideosState> with FirebaseQueryMixin {
         'likes': FieldValue.arrayRemove([loggedInUser.email!])
       });
 
-      return video.copyWith(
+      newVideo = video.copyWith(
           dislikes: [...video.dislikes, loggedInUser.email!],
           likes: video.likes.where((el) => el != loggedInUser.email!).toList());
     }
+
+    updateVideoLocally(newVideo);
+
+    return newVideo;
+  }
+
+  void updateVideoLocally(Video video) {
+    state = state.copyWith(
+        videos: state.videos.map((el) => el == video ? video : el).toList());
+
+    log.f("NEWS AFTER UPDATE: ${state.videos}");
   }
 }
 
