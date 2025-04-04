@@ -392,7 +392,10 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
                     ),
                   ).pSymmetric(horizontal: 0, vertical: 20.h);
               }
-            })
+            }),
+            SizedBox(
+              height: 32.h,
+            )
           ],
         ).pSymmetric(),
       ),
