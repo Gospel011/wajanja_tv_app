@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import 'package:wajanja/data_layer/models/news/news_section.dart';
@@ -100,6 +101,28 @@ class News {
 
   @override
   String toString() {
-    return 'News(postedBy: $postedBy, docRef: $docRef, coverPhoto: $coverPhoto, title: $title, createdAt: $createdAt, category: $category, sections: $sections, likes: $likes, dislikes: $dislikes)';
+    return 'News(title: $title, likes: $likes, dislikes: $dislikes)';
+  }
+
+  @override
+  bool operator ==(covariant News other) {
+    if (identical(this, other)) return true;
+
+    return other.docRef == docRef &&
+        other.postedBy == postedBy &&
+        other.coverPhoto == coverPhoto &&
+        other.title == title &&
+        other.createdAt == createdAt &&
+        other.category == category;
+  }
+
+  @override
+  int get hashCode {
+    return docRef.hashCode ^
+        postedBy.hashCode ^
+        coverPhoto.hashCode ^
+        title.hashCode ^
+        createdAt.hashCode ^
+        category.hashCode;
   }
 }

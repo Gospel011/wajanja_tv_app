@@ -74,12 +74,14 @@ class NewsNotifier extends Notifier<NewsState> with FirebaseQueryMixin {
 
     if (loggedInUser == null) return null;
 
+    late News newNews;
+
     if (news.likes.contains(loggedInUser.email)) {
       // remove email
       news.docRef.update({
         'likes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return news.copyWith(
+      newNews = news.copyWith(
           likes: news.likes.where((el) => el != loggedInUser.email!).toList());
     } else {
       // add email
@@ -87,11 +89,16 @@ class NewsNotifier extends Notifier<NewsState> with FirebaseQueryMixin {
         'likes': FieldValue.arrayUnion([loggedInUser.email!]),
         'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return news.copyWith(
+
+      newNews = news.copyWith(
           likes: [...news.likes, loggedInUser.email!],
           dislikes:
               news.dislikes.where((el) => el != loggedInUser.email!).toList());
     }
+
+    updateNewsLocally(newNews);
+
+    return newNews;
   }
 
   Future<News?> dislike(News news) async {
@@ -101,12 +108,14 @@ class NewsNotifier extends Notifier<NewsState> with FirebaseQueryMixin {
 
     if (loggedInUser == null) return null;
 
+    late News newNews;
+
     if (news.dislikes.contains(loggedInUser.email)) {
       // remove email
       news.docRef.update({
         'dislikes': FieldValue.arrayRemove([loggedInUser.email!])
       });
-      return news.copyWith(
+      newNews = news.copyWith(
           dislikes:
               news.dislikes.where((el) => el != loggedInUser.email!).toList());
     } else {
@@ -116,10 +125,21 @@ class NewsNotifier extends Notifier<NewsState> with FirebaseQueryMixin {
         'likes': FieldValue.arrayRemove([loggedInUser.email!])
       });
 
-      return news.copyWith(
+      newNews = news.copyWith(
           dislikes: [...news.dislikes, loggedInUser.email!],
           likes: news.likes.where((el) => el != loggedInUser.email!).toList());
     }
+
+    updateNewsLocally(newNews);
+
+    return newNews;
+  }
+
+  void updateNewsLocally(News news) {
+    state = state.copyWith(
+        news: state.news.map((el) => el == news ? news : el).toList());
+
+    log.f("NEWS AFTER UPDATE: ${state.news}");
   }
 }
 
