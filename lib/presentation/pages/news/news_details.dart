@@ -6,6 +6,7 @@ import 'package:wajanja/data_layer/models/extras/image_extra.dart';
 import 'package:wajanja/data_layer/models/news/news.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
+import 'package:wajanja/data_layer/providers/news_provider/news_provider.dart';
 import 'package:wajanja/presentation/widgets/engagementButtons.dart';
 import 'package:wajanja/presentation/widgets/image_overflow.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
@@ -88,40 +89,29 @@ class _NewsDetailsState extends ConsumerState<NewsDetails> with ThemesMixin {
               return Engagementbuttons(
                 liked: liked,
                 disliked: disliked,
-                onLikePressed: () {
-                  setState(() {
-                    if (liked) {
-                      targetNews = targetNews!.copyWith(
-                        likes: targetNews!.likes
-                            .where((el) => el != postedBy.email)
-                            .toList(),
-                      );
-                    } else {
-                      targetNews = targetNews!.copyWith(
-                        dislikes: targetNews!.dislikes
-                            .where((el) => el != postedBy.email)
-                            .toList(),
-                        likes: targetNews!.likes..add(postedBy.email!),
-                      );
-                    }
-                  });
+                onLikePressed: () async {
+                  final newNews = await ref
+                      .read(newsNotifierProvider.notifier)
+                      .like(targetNews!);
+
+                  if (newNews != null) {
+                    setState(() {
+                      targetNews = newNews;
+                    });
+                  }
                 },
-                onDislikePressed: () {
-                  setState(() {
-                    if (disliked) {
-                      targetNews = targetNews!.copyWith(
-                        dislikes: targetNews!.dislikes
-                            .where((el) => el != postedBy.email)
-                            .toList(),
-                      );
-                    } else {
-                      targetNews = targetNews!.copyWith(
-                          likes: targetNews!.likes
-                              .where((el) => el != postedBy.email)
-                              .toList(),
-                          dislikes: targetNews!.likes..add(postedBy.email!));
-                    }
-                  });
+                onDislikePressed: () async {
+                  if (targetNews == null) return;
+
+                  final newNews = await ref
+                      .read(newsNotifierProvider.notifier)
+                      .dislike(targetNews!);
+
+                  if (newNews != null) {
+                    setState(() {
+                      targetNews = newNews;
+                    });
+                  }
                 },
               ).pSymmetric(horizontal: 0, vertical: 16.h);
             }),
