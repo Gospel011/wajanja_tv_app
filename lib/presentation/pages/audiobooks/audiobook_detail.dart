@@ -34,7 +34,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
     with ThemesMixin, TimerMixin {
   Audiobook? audiobook;
   int? currentIndex;
-  User? postedBy;
+  // User? postedBy;
 
   late final AudioPlayer player; // = AudioPlayer();
   late final ConcatenatingAudioSource playlist;
@@ -76,7 +76,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
     final bool isAudiobook = audiobookState.audiobook == audiobook;
 
     currentIndex = audiobookState.currentChapter ?? 0;
-    postedBy = ref.read(authNotifierProvider).user;
+    // postedBy = ref.read(authNotifierProvider).user;
 
     playlist = isAudiobook
         ? player.audioSource as ConcatenatingAudioSource
@@ -155,8 +155,9 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                 player: player,
               ),
               Builder(builder: (context) {
-                final liked = audiobook!.likes.contains(postedBy!.email);
-                final disliked = audiobook!.dislikes.contains(postedBy!.email);
+                final User postedBy = audiobook!.postedBy;
+                final liked = audiobook!.likes.contains(postedBy.email);
+                final disliked = audiobook!.dislikes.contains(postedBy.email);
 
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,15 +168,15 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                           if (liked) {
                             audiobook = audiobook!.copyWith(
                               likes: audiobook!.likes
-                                  .where((el) => el != postedBy!.email)
+                                  .where((el) => el != postedBy.email)
                                   .toList(),
                             );
                           } else {
                             audiobook = audiobook!.copyWith(
                               dislikes: audiobook!.dislikes
-                                  .where((el) => el != postedBy!.email)
+                                  .where((el) => el != postedBy.email)
                                   .toList(),
-                              likes: audiobook!.likes..add(postedBy!.email!),
+                              likes: audiobook!.likes..add(postedBy.email!),
                             );
                           }
                         });
@@ -267,16 +268,16 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                           if (disliked) {
                             audiobook = audiobook!.copyWith(
                               dislikes: audiobook!.dislikes
-                                  .where((el) => el != postedBy!.email)
+                                  .where((el) => el != postedBy.email)
                                   .toList(),
                             );
                           } else {
                             audiobook = audiobook!.copyWith(
                                 likes: audiobook!.likes
-                                    .where((el) => el != postedBy!.email)
+                                    .where((el) => el != postedBy.email)
                                     .toList(),
                                 dislikes: audiobook!.likes
-                                  ..add(postedBy!.email!));
+                                  ..add(postedBy.email!));
                           }
                         });
                       },

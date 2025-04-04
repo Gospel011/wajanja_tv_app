@@ -13,8 +13,6 @@ import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/mixins.dart';
 
-
-
 class AudiobookWidget extends ConsumerStatefulWidget {
   const AudiobookWidget({
     super.key,
@@ -27,13 +25,14 @@ class AudiobookWidget extends ConsumerStatefulWidget {
   ConsumerState<AudiobookWidget> createState() => _AudiobookWidgetState();
 }
 
-class _AudiobookWidgetState extends ConsumerState<AudiobookWidget> with ThemesMixin {
+class _AudiobookWidgetState extends ConsumerState<AudiobookWidget>
+    with ThemesMixin {
   late final User postedBy;
 
   @override
   void initState() {
     super.initState();
-    postedBy = ref.read(authNotifierProvider).user!;
+    postedBy = widget.audiobook.postedBy;
   }
 
   @override

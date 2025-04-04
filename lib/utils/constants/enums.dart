@@ -413,7 +413,14 @@ enum NewsStates {
   initial,
   fetchingNews,
   newsFetched,
-  fetchingNewsFailed, 
+  fetchingNewsFailed,
+}
+
+enum AudiobooksStates {
+  initial,
+  fetchingAudiobooks,
+  audiobooksFetched,
+  fetchingAudiobooksFailed,
 }
 
 enum PodcastGenre {

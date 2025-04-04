@@ -7,6 +7,7 @@ import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/data_layer/providers/news_provider/news_provider.dart';
 import 'package:wajanja/my_tests/sample_news.dart';
+import 'package:wajanja/presentation/widgets/loading_states_widget.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
 import 'package:wajanja/presentation/widgets/my_search_bar.dart';
 import 'package:wajanja/presentation/widgets/news_widget.dart';
@@ -85,13 +86,11 @@ class _NewsPageState extends ConsumerState<NewsPage>
             searchController: searchController,
             onSearch: searchNews,
           ).pSymmetric()),
-
           SliverToBoxAdapter(
             child: SizedBox(
               height: 32.h,
             ),
           ),
-
           SliverList.builder(
             itemBuilder: (context, index) {
               final news = newsState.news.elementAt(index);
@@ -108,28 +107,11 @@ class _NewsPageState extends ConsumerState<NewsPage>
             },
             itemCount: newsState.news.length,
           ).spSymmetric(),
-
-          // CENTERED LOADING WIDGET WHEN LOADING INITALLY
-          if (newsState.states == NewsStates.fetchingNews &&
-              newsState.news.isEmpty)
-            SliverFillRemaining(child: Center(child: MyLoadingWidget())),
-
-          // LOADING WIDGET WHEN PAGINATING
-          if (newsState.states == NewsStates.fetchingNews &&
-              newsState.news.isNotEmpty)
-            SliverToBoxAdapter(child: MyLoadingWidget()),
-
-          // NO NEWS AND IS NOT FETCHING
-          if (newsState.states != NewsStates.fetchingNews &&
-              newsState.news.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Text(
-                  "No news found in ${search.country.name}",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
+          LoadingStatesWidget(
+            isLoading: newsState.states == NewsStates.fetchingNews,
+            isEmpty: newsState.news.isEmpty,
+            emptyText: "No news found in ${search.country.name}",
+          ),
         ],
       ),
     );

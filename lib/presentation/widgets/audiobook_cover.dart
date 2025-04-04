@@ -8,7 +8,6 @@ import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/mixins.dart';
 
-
 class AudiobookCoverAndAuthorInfo extends ConsumerStatefulWidget {
   const AudiobookCoverAndAuthorInfo({
     super.key,
@@ -32,7 +31,7 @@ class _AudiobookCoverAndAuthorInfoState
   void initState() {
     super.initState();
 
-    postedBy = ref.read(authNotifierProvider).user!;
+    postedBy = widget.audiobook!.postedBy;
   }
 
   @override

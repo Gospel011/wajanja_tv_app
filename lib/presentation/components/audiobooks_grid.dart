@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/presentation/widgets/audiobook_widget.dart';
 
-
-
 class AudiobooksGrid extends StatelessWidget {
   const AudiobooksGrid({
     super.key,
@@ -21,8 +19,9 @@ class AudiobooksGrid extends StatelessWidget {
           childAspectRatio: 199 / 386,
           mainAxisSpacing: 20.h,
           crossAxisSpacing: 10.w),
+      itemCount: audiobooks.length,
       itemBuilder: (context, index) {
-        final audiobook = audiobooks.elementAt(0);
+        final audiobook = audiobooks.elementAt(index);
         // final postedBy = ref.read(authNotifierProvider).user!;
 
         return AudiobookWidget(

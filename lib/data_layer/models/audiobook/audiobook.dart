@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
+import 'package:wajanja/data_layer/models/user_model/user.dart';
 
 class Audiobook {
+  final DocumentReference<Map<String, dynamic>> docRef;
+  final User postedBy;
   final String coverphoto;
-  final String postedBy;
   final String title;
   final String? description;
   final double averageRating;
@@ -16,8 +18,9 @@ class Audiobook {
   final List<AudiobookChapter> chapters;
   final Timestamp createdAt;
   Audiobook({
-    required this.coverphoto,
+    required this.docRef,
     required this.postedBy,
+    required this.coverphoto,
     required this.title,
     required this.averageRating,
     this.description,
@@ -27,11 +30,9 @@ class Audiobook {
     required this.dislikes,
   });
 
-  
-
   Audiobook copyWith({
     String? coverphoto,
-    String? postedBy,
+    User? postedBy,
     String? title,
     String? description,
     double? averageRating,
@@ -41,8 +42,9 @@ class Audiobook {
     List<String>? dislikes,
   }) {
     return Audiobook(
-      coverphoto: coverphoto ?? this.coverphoto,
+      docRef: docRef,
       postedBy: postedBy ?? this.postedBy,
+      coverphoto: coverphoto ?? this.coverphoto,
       title: title ?? this.title,
       description: description ?? this.description,
       averageRating: averageRating ?? this.averageRating,
@@ -55,12 +57,15 @@ class Audiobook {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'docRef': docRef,
       'coverphoto': coverphoto,
-      'postedBy': postedBy,
+      'postedBy': FirebaseFirestore.instance
+          .collection('users')
+          .doc('users/${postedBy.email!}'),
       'title': title,
       'description': description,
       'averageRating': averageRating,
-      'createdAt': createdAt.toDate().toIso8601String(),
+      'createdAt': createdAt,
       'chapters': chapters.map((x) => x.toMap()).toList(),
       'likes': likes,
       'dislikes': dislikes,
@@ -69,14 +74,18 @@ class Audiobook {
 
   factory Audiobook.fromMap(Map<String, dynamic> map) {
     return Audiobook(
+      docRef: map['docRef'] as DocumentReference<Map<String, dynamic>>,
       coverphoto: map['coverphoto'] as String,
-      postedBy: map['postedBy'] as String,
+      postedBy: User.fromFirestore(
+        map['postedBy'] as DocumentSnapshot<Map<String, dynamic>>,
+        null,
+      ),
       title: map['title'] as String,
       description: map['description'] as String?,
-      averageRating: map['averageRating'] as double,
+      averageRating: double.parse(map['averageRating'].toString()),
       likes: List<String>.from((map['likes'] as List<dynamic>)),
       dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
-      createdAt: Timestamp.fromDate(DateTime.parse(map['createdAt'] as String)),
+      createdAt: map['createdAt'] as Timestamp,
       chapters: List<AudiobookChapter>.from(
         (map['chapters'] as List<dynamic>).map<AudiobookChapter>(
           (x) => AudiobookChapter.fromMap(x as Map<String, dynamic>),
@@ -98,9 +107,8 @@ class Audiobook {
   @override
   bool operator ==(covariant Audiobook other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.coverphoto == coverphoto;
+
+    return other.coverphoto == coverphoto;
   }
 
   @override
