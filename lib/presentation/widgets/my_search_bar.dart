@@ -46,6 +46,9 @@ class _MySearchBarState extends State<MySearchBar> {
             hintText: 'Search',
             // keyboardType: Textinp,
             textInputAction: TextInputAction.search,
+            onChanged: (value) {
+              widget.search.text = value;
+            },
             onFieldSubmitted: (value) {
               // log.f("FIELD SUBMITTED");
 
@@ -65,7 +68,8 @@ class _MySearchBarState extends State<MySearchBar> {
 
             setState(() {
               widget.search.country = value;
-              widget.onSearch(searchController.text, widget.search, newSearch: true);
+              widget.onSearch(searchController.text, widget.search,
+                  newSearch: true);
             });
           },
         ),

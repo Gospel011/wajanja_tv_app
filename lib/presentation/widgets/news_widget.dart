@@ -30,7 +30,7 @@ class _NewsWidgetState extends ConsumerState<NewsWidget> with ThemesMixin {
   @override
   void initState() {
     super.initState();
-    postedBy = ref.read(authNotifierProvider).user!;
+    postedBy = widget.news.postedBy;
   }
 
   TextStyle? get highlightStyle =>

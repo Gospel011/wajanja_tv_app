@@ -81,8 +81,7 @@ class AppRouterConfig {
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: (context, state) {
                           return NewsDetails(
-                            news: (state.extra ?? sampleNews.elementAt(0))
-                                as News,
+                            news: (state.extra) as News,
                           );
                         }),
                   ]),

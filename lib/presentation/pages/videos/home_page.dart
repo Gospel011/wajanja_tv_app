@@ -153,7 +153,10 @@ class _HomePageState extends ConsumerState<HomePage>
                   // body: videosState.videos.isEmpty
                   ? SliverFillRemaining(
                       child: Center(
-                        child: Text("No videos found"),
+                        child: Text(
+                          "No videos found in ${search.country.name}",
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     )
                   : SliverToBoxAdapter(child: SizedBox.shrink()),

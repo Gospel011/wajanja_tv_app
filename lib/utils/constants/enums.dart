@@ -409,6 +409,13 @@ enum VideosStates {
   fetchingVideosFailed,
 }
 
+enum NewsStates {
+  initial,
+  fetchingNews,
+  newsFetched,
+  fetchingNewsFailed, 
+}
+
 enum PodcastGenre {
   arts,
   business,

@@ -29,7 +29,7 @@ class NewsSection {
     return <String, dynamic>{
       'sectionType': sectionType.describe,
       'text': text,
-      'images': images,
+      'pictures': images,
     };
   }
 
@@ -37,8 +37,8 @@ class NewsSection {
     return NewsSection(
       sectionType: NewsSectionType.fromString(map['sectionType'] as String),
       text: map['text'] != null ? map['text'] as String : null,
-      images: map['images'] != null
-          ? List<String>.from((map['images'] as List<dynamic>))
+      images: map['pictures'] != null
+          ? List<String>.from((map['pictures'] as List<dynamic>))
           : null,
     );
   }

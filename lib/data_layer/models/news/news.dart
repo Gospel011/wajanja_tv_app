@@ -5,10 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 import 'package:wajanja/data_layer/models/news/news_section.dart';
+import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 
 class News {
-  final String postedBy;
+  final DocumentReference<Map<String, dynamic>> docRef;
+  final User postedBy;
   final String coverPhoto;
   final String title;
   final Timestamp createdAt;
@@ -18,6 +20,7 @@ class News {
   final List<String> dislikes;
 
   News({
+    required this.docRef,
     required this.postedBy,
     required this.coverPhoto,
     required this.title,
@@ -31,7 +34,7 @@ class News {
   String get shortDate => DateFormat("MMM dd, yyyy").format(createdAt.toDate());
 
   News copyWith({
-    String? postedBy,
+    User? postedBy,
     String? coverPhoto,
     String? title,
     Timestamp? createdAt,
@@ -41,6 +44,7 @@ class News {
     List<String>? dislikes,
   }) {
     return News(
+      docRef: docRef,
       postedBy: postedBy ?? this.postedBy,
       coverPhoto: coverPhoto ?? this.coverPhoto,
       title: title ?? this.title,
@@ -54,23 +58,30 @@ class News {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'postedBy': postedBy,
-      'coverPhoto': coverPhoto,
+      'docRef': docRef,
+      'postedBy': FirebaseFirestore.instance
+          .collection('users')
+          .doc('users/${postedBy.email!}'),
+      'coverphoto': coverPhoto,
       'title': title,
-      'createdAt': createdAt.toDate().toIso8601String(),
+      'createdAt': createdAt,
       'category': category.describe,
       'sections': sections.map((x) => x.toMap()).toList(),
       'likes': likes,
-      'dislikes': dislikes
+      'dislikes': dislikes,
     };
   }
 
   factory News.fromMap(Map<String, dynamic> map) {
     return News(
-      postedBy: map['postedBy'] as String,
-      coverPhoto: map['coverPhoto'] as String,
+      docRef: map['docRef'] as DocumentReference<Map<String, dynamic>>,
+      postedBy: User.fromFirestore(
+        map['postedBy'] as DocumentSnapshot<Map<String, dynamic>>,
+        null,
+      ),
+      coverPhoto: map['coverphoto'] as String,
       title: map['title'] as String,
-      createdAt: Timestamp.fromDate(DateTime.parse(map['createdAt'] as String)),
+      createdAt: map['createdAt'] as Timestamp,
       category: NewsCategory.fromString(map['category'] as String),
       likes: List<String>.from((map['likes'] as List<dynamic>)),
       dislikes: List<String>.from((map['dislikes'] as List<dynamic>)),
@@ -89,6 +100,6 @@ class News {
 
   @override
   String toString() {
-    return 'News(postedBy: $postedBy, coverPhoto: $coverPhoto, title: $title, createdAt: $createdAt, category: $category, sections: $sections, likes: $likes, dislikes: $dislikes)';
+    return 'News(postedBy: $postedBy, docRef: $docRef, coverPhoto: $coverPhoto, title: $title, createdAt: $createdAt, category: $category, sections: $sections, likes: $likes, dislikes: $dislikes)';
   }
 }
