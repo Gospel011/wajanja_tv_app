@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
@@ -71,6 +72,11 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     // _player.setUrl(
     //     "https://res.cloudinary.com/extelvogroup/video/upload/v1742799846/wajanja_tv/podcasts/Should_You_Watch_Porn____Middle_Ground_fabvha.mp3");
+  }
+
+  bool hasPodcasts() {
+    return queue.value.any(
+        (item) => item.id.contains(CloudinaryUploadPath.podcasts.describe));
   }
 
   void _updateQueue() {

@@ -117,16 +117,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
       (previous, next) async {
         if (next.states == PodcastStates.podcastsFetched) {
           log.f("ADDING PODCASTS TO PLAYLIST");
-          await Future.wait(next.podcasts.map((podcast) {
-            final mediaItem = MediaItem(
-              id: podcast.url,
-              title: podcast.title,
-              artUri: Uri.parse(podcast.coverphoto),
-              artist: podcast.postedBy.fullName,
-            );
-
-            return audioHandler.addToPlaylist(mediaItem);
-          }));
+          await syncPodcastsStateWithPlaylist(next);
 
           log.f("PODCASTS ADDED TO PLAYLIST");
         }
@@ -207,6 +198,13 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                               ref
                                   .read(audioPlayerNotifierProvider.notifier)
                                   .updatePodcast(podcast: podcast);
+
+                              if (!audioHandler.hasPodcasts()) {
+                                await syncPodcastsStateWithPlaylist(
+                                    ref.read(podcastNotifierProvider));
+
+                                await audioHandler.playFrom(mediaItem);
+                              }
 
                               if (!(isCurrentMediaItem)) {
                                 // log.f('1');
@@ -352,6 +350,19 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
         ],
       ),
     );
+  }
+
+  Future<void> syncPodcastsStateWithPlaylist(PodcastState podcastState) async {
+    await Future.wait(podcastState.podcasts.map((podcast) {
+      final mediaItem = MediaItem(
+        id: podcast.url,
+        title: podcast.title,
+        artUri: Uri.parse(podcast.coverphoto),
+        artist: podcast.postedBy.fullName,
+      );
+
+      return audioHandler.addToPlaylist(mediaItem);
+    }));
   }
 
   void loadPodcast(Podcast podcast) {
