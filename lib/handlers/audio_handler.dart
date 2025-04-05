@@ -126,9 +126,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return null;
     }
 
-    final playingMediaItem = queue.value.elementAt(currentlyPlayingIndex);
+    try {
+      final playingMediaItem = queue.value.elementAt(currentlyPlayingIndex);
 
-    return playingMediaItem;
+      return playingMediaItem;
+    } catch (e) {
+      log.f("ERROR IS: $e");
+
+      return null;
+    }
   }
 
   Future<void> clearPlaylist() async {

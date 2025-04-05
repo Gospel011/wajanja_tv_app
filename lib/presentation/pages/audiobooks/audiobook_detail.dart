@@ -153,9 +153,11 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
       final chapter = audiobook!.chapters.elementAt(0);
       final mediaItem = getMediaItemFromChapter(chapter);
 
-      audioHandler
-        ..playFrom(mediaItem)
-        ..player.setVolume(1);
+      if (await session.setActive(true)) {
+        audioHandler
+          ..playFrom(mediaItem)
+          ..player.setVolume(1);
+      }
 
       // player
       //   ..setAudioSource(
@@ -410,10 +412,15 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
                   chapter: chapter,
                   selected: isCurrentChapter,
                   isPlaying: player.playing,
-                  onPlay: () {
-                    setState(() {
-                      player.playing ? player.pause() : player.play();
-                    });
+                  onPlay: () async {
+                    if (player.playing) {
+                      player.pause();
+                    } else {
+                      if (await session.setActive(true)) {
+                        player.play();
+                      }
+                    }
+                    setState(() {});
                   },
                   onTap: () {
                     setState(() {

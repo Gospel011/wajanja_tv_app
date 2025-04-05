@@ -209,7 +209,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                                 await syncPodcastsStateWithPlaylist(
                                     ref.read(podcastNotifierProvider));
 
-                                await audioHandler.playFrom(mediaItem);
+                                await playFrom(mediaItem);
                               }
 
                               if (!(isCurrentMediaItem)) {
@@ -218,12 +218,14 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                                   await audioHandler.addToPlaylist(mediaItem);
                                 }
 
-                                await audioHandler.playFrom(mediaItem);
+                                await playFrom(mediaItem);
                               } else if (isCurrentMediaItem) {
                                 if (audioHandler.player.playing) {
                                   audioHandler.pause();
                                 } else {
-                                  audioHandler.play();
+                                  if (await session.setActive(true)) {
+                                    audioHandler.play();
+                                  }
                                 }
                               } else {
                                 // log.f('2');
@@ -359,6 +361,12 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
     );
   }
 
+  Future<void> playFrom(MediaItem mediaItem) async {
+    if (await session.setActive(true)) {
+      await audioHandler.playFrom(mediaItem);
+    }
+  }
+
   Future<void> syncPodcastsStateWithPlaylist(PodcastState podcastState) async {
     await Future.wait(podcastState.podcasts.map((podcast) {
       final mediaItem = MediaItem(
@@ -372,11 +380,11 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
     }));
   }
 
-  void loadPodcast(Podcast podcast) {
-    player
-      ..setAudioSource(AudioSource.uri(Uri.parse(podcast.url)))
-      ..play();
-  }
+  // void loadPodcast(Podcast podcast) {
+  //   player
+  //     ..setAudioSource(AudioSource.uri(Uri.parse(podcast.url)))
+  //     ..play();
+  // }
 }
 
 class LabelledLists extends StatelessWidget with StatelessThemesMixin {

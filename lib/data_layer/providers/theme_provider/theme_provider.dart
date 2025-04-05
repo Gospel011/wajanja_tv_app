@@ -16,7 +16,7 @@ class ThemeNotifier extends Notifier<ThemeState> {
 
     return themeMap != null
         ? ThemeState.fromJson(themeMap)
-        : ThemeState(themeMode: ThemeMode.system);
+        : ThemeState(themeMode: ThemeMode.dark);
   }
 
   void toggleTheme(BuildContext context) {

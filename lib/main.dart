@@ -17,6 +17,7 @@ import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
 import 'package:wajanja/utils/themes/themes.dart';
 
 late MyAudioHandler audioHandler;
+late AudioSession session;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ void main() async {
   // await UserDb.instance.init();
   // await ;
 
-  final session = await AudioSession.instance;
+  session = await AudioSession.instance;
   await session.configure(AudioSessionConfiguration.music());
 
   audioHandler = await AudioService.init(
