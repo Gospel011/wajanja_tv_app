@@ -5,11 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
+import 'package:wajanja/main.dart';
 import 'package:wajanja/presentation/pages/videos/video_description.dart';
 import 'package:wajanja/presentation/widgets/buttons/my_elevated_button.dart';
 import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
+import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
 
 class Home extends ConsumerStatefulWidget {
@@ -35,17 +37,23 @@ class _HomeState extends ConsumerState<Home> with ThemesMixin {
   Widget build(BuildContext context) {
     final audioPlayerState = ref.watch(audioPlayerNotifierProvider);
     final videosState = ref.watch(videosNotifierProvider);
+    final bool canShowFAB =
+        audioPlayerState.audiobook != null || audioPlayerState.podcast != null;
+
+    log.f("CAN SHOW FAB: $canShowFAB");
+
+    // audioHandler.plstr
 
     return Scaffold(
-      floatingActionButton: audioPlayerState.currentPlayer != null
+      floatingActionButton: canShowFAB
           ? StreamBuilder(
-              stream: audioPlayerState.currentPlayer!.playerStateStream,
+              stream: audioHandler.player.playerStateStream,
               builder: (context, snapshot) {
                 return PlayPauseWidget(
                   isPlaying: snapshot.data?.playing ?? false,
                   // isPlaying: false,
                   onTap: () {
-                    final player = audioPlayerState.currentPlayer!;
+                    final player = audioHandler.player;
 
                     setState(() {
                       player.playing ? player.pause() : player.play();

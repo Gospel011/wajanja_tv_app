@@ -8,12 +8,12 @@ import 'package:wajanja/utils/mixins.dart';
 class AudioPlayerSlider extends StatefulWidget {
   const AudioPlayerSlider({
     super.key,
-    required this.player,
+    this.player,
     this.timerStyle,
     this.showStart = true,
     this.showEnd = true,
   });
-  final AudioPlayer player;
+  final AudioPlayer? player;
   final TextStyle? timerStyle;
   final bool showStart;
   final bool showEnd;
@@ -26,15 +26,16 @@ class _AudioPlayerSliderState extends State<AudioPlayerSlider> with TimerMixin {
   TimerMode timerMode = TimerMode.descending;
   @override
   Widget build(BuildContext context) {
+    if (widget.player == null) return SizedBox.shrink();
     return StreamBuilder(
-        stream: widget.player.positionStream,
+        stream: widget.player!.positionStream,
         builder: (context, snapshot) {
           final currentPosition = (snapshot.data?.inSeconds ?? 0);
 
           // AudioPlayer.clearAssetCache();
 
           return StreamBuilder(
-              stream: widget.player.bufferedPositionStream,
+              stream: widget.player!.bufferedPositionStream,
               builder: (context, bufferSnapshot) {
                 final bufferedPosition = (bufferSnapshot.data?.inSeconds ?? 0);
                 return Row(
@@ -47,7 +48,7 @@ class _AudioPlayerSliderState extends State<AudioPlayerSlider> with TimerMixin {
                         style: widget.timerStyle,
                       ),
                     Expanded(
-                      child: widget.player.duration == null
+                      child: widget.player!.duration == null
                           ? MyLoadingWidget()
                           : Container(
                               constraints: BoxConstraints(
@@ -60,14 +61,14 @@ class _AudioPlayerSliderState extends State<AudioPlayerSlider> with TimerMixin {
                                 // inactiveColor: Colors.grey,
                                 value: currentPosition.toDouble(),
                                 // value: 0,
-                                max: (widget.player.duration?.inSeconds ?? 3)
+                                max: (widget.player!.duration?.inSeconds ?? 3)
                                     .toDouble(),
                                 // max: 1,
                                 min: 0,
                                 onChanged: (position) {
-                                  if (widget.player.duration == null) return;
+                                  if (widget.player!.duration == null) return;
                                   setState(() {
-                                    widget.player.seek(
+                                    widget.player!.seek(
                                         Duration(seconds: position.toInt()));
                                   });
                                 },
@@ -78,7 +79,7 @@ class _AudioPlayerSliderState extends State<AudioPlayerSlider> with TimerMixin {
                       final timer = getTimer(
                         timerMode: timerMode,
                         currentDuration: snapshot.data ?? Duration.zero,
-                        fullDuration: widget.player.duration ?? Duration.zero,
+                        fullDuration: widget.player!.duration ?? Duration.zero,
                       );
 
                       return GestureDetector(

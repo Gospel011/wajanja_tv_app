@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +10,8 @@ import 'package:wajanja/data_layer/models/podcast/podcast.dart';
 import 'package:wajanja/data_layer/models/search/search.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/podcasts_provider/podcast_provider.dart';
+import 'package:wajanja/handlers/audio_handler.dart';
+import 'package:wajanja/main.dart';
 import 'package:wajanja/my_tests/sample_podcasts.dart';
 import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
 import 'package:wajanja/presentation/widgets/loading_states_widget.dart';
@@ -77,7 +80,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
 
     player = ref.read(audioPlayerNotifierProvider).player;
 
-    subscription = player.playerStateStream.listen((playerState) {
+    subscription = audioHandler.player.playerStateStream.listen((playerState) {
       setState(
         () {
           if (playerState.playing) {
@@ -85,9 +88,9 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
 
             log.i("PLAYING STARTED");
 
-            ref
-                .read(audioPlayerNotifierProvider.notifier)
-                .updateCurrentPlayer(player);
+            // ref
+            //     .read(audioPlayerNotifierProvider.notifier)
+            //     .updateCurrentPlayer(player);
           }
         },
       );
@@ -108,6 +111,27 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
     final podcastsState = ref.watch(podcastNotifierProvider);
 
     log.i("PODCASTS BUILD METHOD CALLED");
+
+    ref.listen(
+      podcastNotifierProvider,
+      (previous, next) async {
+        if (next.states == PodcastStates.podcastsFetched) {
+          log.f("ADDING PODCASTS TO PLAYLIST");
+          await Future.wait(next.podcasts.map((podcast) {
+            final mediaItem = MediaItem(
+              id: podcast.url,
+              title: podcast.title,
+              artUri: Uri.parse(podcast.coverphoto),
+              artist: podcast.postedBy.fullName,
+            );
+
+            return audioHandler.addToPlaylist(mediaItem);
+          }));
+
+          log.f("PODCASTS ADDED TO PLAYLIST");
+        }
+      },
+    );
 
     return Scaffold(
       appBar: buildAppBar(context, ref: ref, title: "Podcasts"),
@@ -134,7 +158,19 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
             itemBuilder: (context, index) {
               final podcast = podcastsState.podcasts.elementAt(index);
               final isExpanded = currentIndex == index && expanded == true;
-              final isPlaying = currentIndex == index && player.playing;
+              final mediaItem = MediaItem(
+                id: podcast.url,
+                title: podcast.title,
+                artUri: Uri.parse(podcast.coverphoto),
+                artist: podcast.postedBy.fullName,
+              );
+
+              final bool isCurrentMediaItem =
+                  audioHandler.currentMediaItem()?.id == mediaItem.id;
+
+              final isPlaying = isCurrentMediaItem &&
+                  audioHandler.player
+                      .playing; // currentIndex == index && player.playing;
 
               return GestureDetector(
                 onTap: () {
@@ -143,11 +179,11 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                     expanded =
                         index != currentIndex ? true : !(expanded ?? false);
                     currentIndex = index;
-                    if (isPlaying) {
-                      log.i("RETURNING SINCE IS PLAYING");
-                      return;
-                    }
-                    loadPodcast(podcast);
+                    // if (isPlaying) {
+                    //   log.i("RETURNING SINCE IS PLAYING");
+                    //   return;
+                    // }
+                    // loadPodcast(podcast);
                   });
                 },
                 child: Container(
@@ -162,34 +198,64 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                           // Text('data')
                           PlayPauseWidget(
                             isPlaying: isPlaying,
-                            onTap: () {
-                              log.i("Handle toggle playing");
+                            onTap: () async {
+                              // log.f("Handle toggle playing: $isPlaying");
+
+                              // MyAudioService.instance.audioHandler //.play();
+                              // .playMediaItem(mediaItem);
 
                               ref
-                                  .read(audioPlayerNotifierProvider)
-                                  .audiobookPlayer
-                                  .pause();
+                                  .read(audioPlayerNotifierProvider.notifier)
+                                  .updatePodcast(podcast: podcast);
 
-                              final canLoadUrl =
-                                  (player.audioSource as UriAudioSource?)
-                                          ?.uri
-                                          .toString() !=
-                                      podcast.url;
+                              if (!(isCurrentMediaItem)) {
+                                // log.f('1');
+                                if (!audioHandler.inQueue(mediaItem)) {
+                                  await audioHandler.addToPlaylist(mediaItem);
+                                }
 
-                              log.i("CAN LOAD URL: $canLoadUrl");
+                                await audioHandler.playFrom(mediaItem);
+                              } else if (isCurrentMediaItem) {
+                                if (audioHandler.player.playing) {
+                                  audioHandler.pause();
+                                } else {
+                                  audioHandler.play();
+                                }
+                              } else {
+                                // log.f('2');
+                                audioHandler.pause();
+                              }
+
+                              setState(() {
+                                // log.f('3');
+                              });
+                              // ref
+                              //     .read(audioPlayerNotifierProvider)
+                              //     .audiobookPlayer
+                              //     .pause();
+
+                              // final canLoadUrl =
+                              //     (player.audioSource as UriAudioSource?)
+                              //             ?.uri
+                              //             .toString() !=
+                              //         podcast.url;
+
+                              // log.i("CAN LOAD URL: $canLoadUrl");
+
+                              // audioHandler.p
 
                               // return;
 
-                              setState(() {
-                                currentIndex = index;
-                                if (isPlaying) {
-                                  player.pause();
-                                } else if (canLoadUrl) {
-                                  loadPodcast(podcast);
-                                } else {
-                                  player.play();
-                                }
-                              });
+                              // setState(() {
+                              //   currentIndex = index;
+                              //   if (isPlaying) {
+                              //     player.pause();
+                              //   } else if (canLoadUrl) {
+                              //     loadPodcast(podcast);
+                              //   } else {
+                              //     player.play();
+                              //   }
+                              // });
                             },
                           ),
 
@@ -224,7 +290,12 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                                         style: textTheme.titleMedium,
                                       ),
                                       AudioPlayerSlider(
-                                        player: player,
+                                        player: audioHandler
+                                                    .currentMediaItem()
+                                                    ?.id ==
+                                                mediaItem.id
+                                            ? audioHandler.player
+                                            : null,
                                         timerStyle: textTheme.labelLarge,
                                         showStart: false,
                                       ),

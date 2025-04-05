@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,9 +10,12 @@ import 'package:wajanja/data_layer/db/user_db.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart';
 import 'package:wajanja/firebase_options.dart';
+import 'package:wajanja/handlers/audio_handler.dart';
 import 'package:wajanja/presentation/pages/go_router_config.dart';
 import 'package:wajanja/utils/helpers/cloudinary_helper/cloudinary_helper.dart';
 import 'package:wajanja/utils/themes/themes.dart';
+
+late MyAudioHandler audioHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,16 +29,40 @@ void main() async {
 
   await Hive.openBox<String>('themes');
 
-  await UserDb.instance.init();
+  // await UserDb.instance.init();
+  // await ;
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  audioHandler = await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: AudioServiceConfig(
+      androidNotificationChannelId: 'com.example.wajanja.audio',
+      androidNotificationChannelName: "Audio Player",
+      // androidNotificationOngoing: true,
+      // androidStopForegroundOnPause: true,
+    ),
   );
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
+  await Future.wait([
+    UserDb.instance.init(),
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ),
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]),
   ]);
+
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+
+  // await MyAudioService.instance.initHandler();
 
   runApp(ProviderScope(child: const MyApp()));
 }

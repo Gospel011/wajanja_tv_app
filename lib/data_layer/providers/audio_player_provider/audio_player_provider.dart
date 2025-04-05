@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
+import 'package:wajanja/data_layer/models/podcast/podcast.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_state.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 
@@ -28,6 +29,12 @@ class AudioPlayerNotifier extends Notifier<AudioPlayerState> {
   void updateAudiobook({required Audiobook audiobook, int currentChapter = 0}) {
     state =
         state.copyWith(audiobook: audiobook, currentChapter: currentChapter);
+  }
+
+  void updatePodcast({required Podcast podcast}) {
+    state = state.copyWith(
+      podcast: podcast,
+    );
   }
 
   void updateCurrentPlayer(AudioPlayer player) {
