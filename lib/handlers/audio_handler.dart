@@ -54,17 +54,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   MyAudioHandler() {
-    // mediaItem.add(
-    //   MediaItem(
-    //     id: 'https://res.cloudinary.com/extelvogroup/video/upload/v1742799846/wajanja_tv/podcasts/Should_You_Watch_Porn____Middle_Ground_fabvha.mp3',
-    //     album: "Wajanja Tv",
-    //     title: "Should You Watch Porn?",
-    //     artist: "Middle Ground",
-    //     // duration: Duration(minutes: 23), // optional
-    //     artUri: Uri.parse(
-    //         'https://i.ytimg.com/vi/s3GmJRa59aQ/maxresdefault.jpg'), // thumbnail for notification
-    //   ),
-    // );
     _player.setAudioSource(_playlist);
 
     _updateQueue();
@@ -119,6 +108,13 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final playingMediaItem = queue.value.elementAt(currentlyPlayingIndex);
 
     return playingMediaItem;
+  }
+
+  Future<void> clearPlaylist() async {
+    // mediaItem.add(event)
+    await stop();
+    _playlist.clear();
+    queue.value.clear();
   }
 
   bool isCurrentlyPlaying(MediaItem item) {

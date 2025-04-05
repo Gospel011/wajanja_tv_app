@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +10,7 @@ import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
+import 'package:wajanja/main.dart';
 import 'package:wajanja/presentation/widgets/audiobook_chapter_tile.dart';
 import 'package:wajanja/presentation/widgets/audiobook_cover.dart';
 import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
@@ -37,81 +39,133 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
   // User? postedBy;
 
   late final AudioPlayer player; // = AudioPlayer();
-  late final ConcatenatingAudioSource playlist;
+  // late final ConcatenatingAudioSource playlist;
 
   TimerMode timerMode = TimerMode.descending;
 
-  late final StreamSubscription<PlayerState> subscription;
+  late final StreamSubscription<PlayerState> playerStateStreamSubscription;
+  late final StreamSubscription<int?> currentIndexStreamSubscription;
 
   @override
   void initState() {
     super.initState();
     final audiobookState = ref.read(audioPlayerNotifierProvider);
 
-    player = ref.read(audioPlayerNotifierProvider).audiobookPlayer;
+    player = audioHandler
+        .player; //ref.read(audioPlayerNotifierProvider).audiobookPlayer;
 
-    subscription = player.playerStateStream.listen(
+    currentIndexStreamSubscription =
+        player.currentIndexStream.listen((int? index) {
+      if (index == null) return;
+
+      setState(() {
+        currentIndex = index;
+
+        updateAudiobook(
+          audiobook!,
+          currentChapter: currentIndex!,
+        );
+      });
+    });
+
+    playerStateStreamSubscription = player.playerStateStream.listen(
       (playerState) {
         if (playerState.playing) {
-          ref
-              .read(audioPlayerNotifierProvider.notifier)
-              .updateCurrentPlayer(player);
+          // ref
+          //     .read(audioPlayerNotifierProvider.notifier)
+          //     .updateCurrentPlayer(player);
         }
+
+        log.f("PLAYER STATE: $playerState");
+
+        setState(() {});
       },
     );
 
     audiobook = widget.audiobook;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(audioPlayerNotifierProvider).player.pause();
-      ref.read(audioPlayerNotifierProvider.notifier).refresh();
-
-      ref
-          .read(audioPlayerNotifierProvider.notifier)
-          .updateAudiobook(audiobook: audiobook!);
-    });
-
     log.i("BOOK FROM STATE: ${audiobookState.audiobook} $audiobook");
 
-    final bool isAudiobook = audiobookState.audiobook == audiobook;
-
-    currentIndex = audiobookState.currentChapter ?? 0;
     // postedBy = ref.read(authNotifierProvider).user;
 
-    playlist = isAudiobook
-        ? player.audioSource as ConcatenatingAudioSource
-        : ConcatenatingAudioSource(
-            useLazyPreparation: true,
-            children: List<AudioSource>.generate(
-              audiobook!.chapters.length,
-              (index) {
-                return AudioSource.uri(
-                    Uri.parse(audiobook!.chapters.elementAt(index).url));
-              },
-            ),
-          );
+    // playlist = isAudiobook
+    //     ? player.audioSource as ConcatenatingAudioSource
+    //     : ConcatenatingAudioSource(
+    //         useLazyPreparation: true,
+    //         children: List<AudioSource>.generate(
+    //           audiobook!.chapters.length,
+    //           (index) {
+    //             return AudioSource.uri(
+    //                 Uri.parse(audiobook!.chapters.elementAt(index).url));
+    //           },
+    //         ),
+    //       );
+
+    log.f("ABOUT TO START PLAYING AUDIO");
+
+    startPlayingAudiobooks();
+  }
+
+  @override
+  void dispose() {
+    playerStateStreamSubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> startPlayingAudiobooks() async {
+    final audiobookState = ref.read(audioPlayerNotifierProvider);
+    final bool isAudiobook =
+        audiobook != null && audiobookState.audiobook == audiobook;
+
+    currentIndex = audiobookState.currentChapter ?? 0;
+
+    log.f("IS AUDIO BOOK: $isAudiobook, AUDIO BOOK: $audiobook");
+
+    if (!isAudiobook && audiobook != null) {
+      // update audio playlist and queue
+      await audioHandler.clearPlaylist(); //! use await
+
+      await Future.wait(audiobook!.chapters.map((el) {
+        final mediaItem = MediaItem(
+          id: el.url,
+          title: el.title,
+          artUri: Uri.parse(audiobook!.coverphoto),
+          artist: audiobook!.postedBy.fullName,
+        );
+
+        return audioHandler.addToPlaylist(mediaItem);
+      }));
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // ref.read(audioPlayerNotifierProvider).player.pause();
+        ref.read(audioPlayerNotifierProvider.notifier).refresh();
+
+        ref
+            .read(audioPlayerNotifierProvider.notifier)
+            .updateAudiobook(audiobook: audiobook!);
+      });
+    }
 
     log.i("IS BOOK: $isAudiobook");
 
     if (!isAudiobook) {
       log.i("PLAYINGJ");
-      player
-        ..setAudioSource(
-          playlist,
-          initialIndex: 0,
-          initialPosition: Duration.zero,
-        )
-        ..setVolume(1)
-        ..play();
+
+      audioHandler
+        ..play()
+        ..player.setVolume(1);
+
+      // player
+      //   ..setAudioSource(
+      //     playlist,
+      //     initialIndex: 0,
+      //     initialPosition: Duration.zero,
+      //   )
+      //   ..setVolume(1)
+      //   ..play();
     } else {
       log.i("SKIP PLAYING");
     }
-  }
-
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
   }
 
   AudiobookChapter get currentChapter =>
