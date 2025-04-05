@@ -131,12 +131,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
       await audioHandler.clearPlaylist(); //! use await
 
       await Future.wait(audiobook!.chapters.map((el) {
-        final mediaItem = MediaItem(
-          id: el.url,
-          title: el.title,
-          artUri: Uri.parse(audiobook!.coverphoto),
-          artist: audiobook!.postedBy.fullName,
-        );
+        final mediaItem = getMediaItemFromChapter(el);
 
         return audioHandler.addToPlaylist(mediaItem);
       }));
@@ -154,10 +149,12 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
     log.i("IS BOOK: $isAudiobook");
 
     if (!isAudiobook || somethingDifferentIsPlaying) {
-      log.i("PLAYINGJ");
+      log.f("PLAYINGJ");
+      final chapter = audiobook!.chapters.elementAt(0);
+      final mediaItem = getMediaItemFromChapter(chapter);
 
       audioHandler
-        ..play()
+        ..playFrom(mediaItem)
         ..player.setVolume(1);
 
       // player
@@ -203,6 +200,16 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
       //   audioHandler.playFromMediaId(audiobook!.chapters.elementAt(0).url);
       // }
     }
+  }
+
+  MediaItem getMediaItemFromChapter(AudiobookChapter chapter) {
+    return MediaItem(
+      id: chapter.url,
+      title: chapter.title,
+      artUri: Uri.parse(audiobook!.coverphoto),
+      artist: audiobook!.postedBy.fullName,
+      duration: chapter.fullDuration,
+    );
   }
 
   AudiobookChapter get currentChapter =>

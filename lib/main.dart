@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,9 @@ void main() async {
 
   // await UserDb.instance.init();
   // await ;
+
+  final session = await AudioSession.instance;
+  await session.configure(AudioSessionConfiguration.music());
 
   audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),

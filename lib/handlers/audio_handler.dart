@@ -190,4 +190,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> seek(Duration position) => _player.seek(position);
+
+  // mute() {}
 }
