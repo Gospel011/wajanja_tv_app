@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 
@@ -79,6 +80,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         (item) => item.id.contains(CloudinaryUploadPath.podcasts.describe));
   }
 
+  // bool hasAudiobookChapter(Audiobook audiobook) {
+  //   return queue.value.an
+  // }
+
   void _updateQueue() {
     queue.add(List<MediaItem>.from(_playlist.children
         .map((el) => (el as UriAudioSource).tag as MediaItem)
@@ -103,11 +108,21 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   MediaItem? currentMediaItem() {
     final currentlyPlayingIndex = _player.currentIndex;
 
+    log.f("CURRENTLY PLAYING INDEX: $currentlyPlayingIndex");
+
     // log.f("CURRENTLY PLAYING INDEX: $currentlyPlayingIndex");
 
+    // if (currentlyPlayingIndex == null ||
+    //     queue.value.isEmpty ||
+    //     _playlist.children.isEmpty ||
+    //     currentlyPlayingIndex < 0) {
+    //   return null;
+    // }
+
     if (currentlyPlayingIndex == null ||
-        queue.value.isEmpty ||
-        currentlyPlayingIndex < 0) {
+        (currentlyPlayingIndex) < 0 ||
+        (queue.value.isNotEmpty &&
+            currentlyPlayingIndex > queue.value.length - 1)) {
       return null;
     }
 
@@ -121,6 +136,21 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await stop();
     _playlist.clear();
     queue.value.clear();
+  }
+
+  Future<void> clearPlaylistWhere(bool Function(MediaItem) test) async {
+    final newQueue = queue.value.where(test).toList();
+    await _playlist.clear();
+    await _playlist.addAll(List<AudioSource>.generate(newQueue.length, (index) {
+      final item = newQueue.elementAt(index);
+      final uri = Uri.parse(item.id);
+
+      return AudioSource.uri(uri);
+    }));
+
+    log.f("FINAL QUEUE: ${newQueue.map((el) => el.artUri)}");
+
+    queue.value = newQueue;
   }
 
   bool isCurrentlyPlaying(MediaItem item) {

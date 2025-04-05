@@ -7,6 +7,7 @@ import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
+import 'package:wajanja/main.dart';
 import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/my_video_player.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
@@ -65,10 +66,12 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
         video!.youtubeUrl != null;
 
     log.i("PARSED URI: $uri");
-    await Future.wait([
-      ref.read(audioPlayerNotifierProvider).player.pause(),
-      ref.read(audioPlayerNotifierProvider).audiobookPlayer.pause(),
-    ]);
+    // await Future.wait([
+    //   ref.read(audioPlayerNotifierProvider).player.pause(),
+    //   ref.read(audioPlayerNotifierProvider).audiobookPlayer.pause(),
+    // ]);
+
+    await audioHandler.pause();
 
     ref.read(audioPlayerNotifierProvider.notifier).refresh();
 

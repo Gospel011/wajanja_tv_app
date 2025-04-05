@@ -120,8 +120,13 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
     currentIndex = audiobookState.currentChapter ?? 0;
 
     log.f("IS AUDIO BOOK: $isAudiobook, AUDIO BOOK: $audiobook");
+    final somethingDifferentIsPlaying = audiobook?.chapters
+            .map((el) => el.url)
+            .toList()
+            .contains(audioHandler.currentMediaItem()?.id) ==
+        false;
 
-    if (!isAudiobook && audiobook != null) {
+    if ((!isAudiobook && audiobook != null) || somethingDifferentIsPlaying) {
       // update audio playlist and queue
       await audioHandler.clearPlaylist(); //! use await
 
@@ -148,7 +153,7 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
 
     log.i("IS BOOK: $isAudiobook");
 
-    if (!isAudiobook) {
+    if (!isAudiobook || somethingDifferentIsPlaying) {
       log.i("PLAYINGJ");
 
       audioHandler
@@ -164,7 +169,39 @@ class _AudiobookDetailState extends ConsumerState<AudiobookDetail>
       //   ..setVolume(1)
       //   ..play();
     } else {
-      log.i("SKIP PLAYING");
+      log.f("SKIP PLAYING");
+
+      // if (somethingDifferentIsPlaying) {
+      //   final chapter = audiobook!.chapters.elementAt(0);
+      //   final firstChapter = chapter.url;
+      //   log.f("PLAYING: $firstChapter");
+      //   final item = MediaItem(
+      //     id: chapter.url,
+      //     title: chapter.title,
+      //     artUri: Uri.parse(audiobook!.coverphoto),
+      //     artist: audiobook!.postedBy.fullName,
+      //   );
+
+      //   log.f(
+      //       "clearing playlist where chapter is not in current audiobook chatpers");
+
+      //   // await audioHandler
+      //   //     .clearPlaylistWhere((el) => el.artUri!.path == item.artUri!.path);
+
+      //   await audioHandler.clearPlaylist();
+
+      //   log.f("PLAYING FROM: $item");
+
+      //   audioHandler.playFrom(item);
+      // }
+
+      //   if (audiobook?.chapters
+      //         .map((el) => el.url)
+      //         .toList()
+      //         .contains(audioHandler.currentMediaItem()?.id) ==
+      //     false) {
+      //   audioHandler.playFromMediaId(audiobook!.chapters.elementAt(0).url);
+      // }
     }
   }
 

@@ -163,6 +163,12 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                   audioHandler.player
                       .playing; // currentIndex == index && player.playing;
 
+              log.f("is playing: $isPlaying");
+
+              log.f("IS CURRENT MEDIA ITEM: $isCurrentMediaItem");
+
+              log.f("PLAYER PLAYING: ${audioHandler.player.playing}");
+
               return GestureDetector(
                 onTap: () {
                   ref.read(audioPlayerNotifierProvider).audiobookPlayer.pause();
@@ -267,6 +273,7 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
                                     MyImageWidget(
                                       image: podcast.coverphoto,
                                       size: 64.r,
+                                      borderRadius: 8.r,
                                     ),
                                     Expanded(
                                       child: Text(
