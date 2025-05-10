@@ -11,6 +11,7 @@ import 'package:wajanja/main.dart';
 import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/my_video_player.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
+import 'package:wajanja/presentation/widgets/icon_container.dart';
 import 'package:wajanja/presentation/widgets/my_expandable_text.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
@@ -361,41 +362,6 @@ class _VideoDescriptionState extends ConsumerState<VideoDescription>
                 ],
               ),
             ),
-    );
-  }
-}
-
-class IconContainer extends StatelessWidget {
-  const IconContainer({
-    super.key,
-    required this.icon,
-    this.size,
-    this.backgroundColor,
-    this.padding,
-    this.onTap,
-  });
-
-  final Widget icon;
-  final Color? backgroundColor;
-  final VoidCallback? onTap;
-  final double? size;
-  final EdgeInsetsGeometry? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: padding ?? EdgeInsets.all(4.r),
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: backgroundColor ??
-              Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-        child: icon,
-      ),
     );
   }
 }

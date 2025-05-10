@@ -38,7 +38,7 @@ class _MySearchBarState extends State<MySearchBar> {
     return Row(
       // key: phoneKey,
       spacing: 8.w,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      // crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: MyTextFormField(
