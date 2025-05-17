@@ -13,9 +13,9 @@ class AppSvgs {
 
   static final like = SvgPicture.asset('assets/svg/like.svg');
   static final dislike = SvgPicture.asset('assets/svg/dislike.svg');
+  static final share = SvgPicture.asset('assets/svg/share.svg');
   static final likeFilled = SvgPicture.asset('assets/svg/like_filled.svg');
   static final dislikeFilled = SvgPicture.asset('assets/svg/dislike_filled.svg');
-  static final share = SvgPicture.asset('assets/svg/share.svg');
 
   static final video = SvgPicture.asset('assets/svg/video.svg');
   static final news = SvgPicture.asset('assets/svg/news.svg');

@@ -9,7 +9,6 @@ import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook_chapter.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
-import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/main.dart';
 import 'package:wajanja/presentation/widgets/audiobook_chapter_tile.dart';
 import 'package:wajanja/presentation/widgets/audiobook_cover.dart';

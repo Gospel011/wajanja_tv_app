@@ -1,7 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:wajanja/data_layer/models/news/news.dart';
-import 'package:wajanja/data_layer/models/news/news_section.dart';
-import 'package:wajanja/utils/constants/enums.dart';
 
 final sampleNews = [
 //   News(

@@ -1,5 +1,4 @@
 import 'package:wajanja/data_layer/models/podcast/podcast.dart';
-import 'package:wajanja/utils/constants/enums.dart';
 
 List<Podcast> podcasts = [
   // Podcast(

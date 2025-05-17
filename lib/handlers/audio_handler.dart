@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:wajanja/data_layer/providers/theme_provider/theme_provider.dart';
 import 'package:wajanja/utils/mixins.dart';
 
 class MySwitchListTile extends ConsumerWidget with StatelessThemesMixin {

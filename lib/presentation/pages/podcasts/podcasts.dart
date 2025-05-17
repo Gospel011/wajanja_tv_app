@@ -1,26 +1,18 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:wajanja/data_layer/models/podcast/podcast.dart';
 import 'package:wajanja/data_layer/models/search/search.dart';
 import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_provider.dart';
 import 'package:wajanja/data_layer/providers/podcasts_provider/podcast_provider.dart';
-import 'package:wajanja/handlers/audio_handler.dart';
 import 'package:wajanja/main.dart';
-import 'package:wajanja/my_tests/sample_podcasts.dart';
-import 'package:wajanja/presentation/widgets/audioplayer_slider.dart';
+import 'package:wajanja/presentation/components/podcast_widget.dart';
 import 'package:wajanja/presentation/widgets/loading_states_widget.dart';
-import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/presentation/widgets/my_search_bar.dart';
-import 'package:wajanja/presentation/widgets/play_pause_widget.dart';
-import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';
-import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
 import 'package:wajanja/utils/mixins.dart';
@@ -169,185 +161,56 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
 
               log.f("PLAYER PLAYING: ${audioHandler.player.playing}");
 
-              return GestureDetector(
-                onTap: () {
+              return PodcastWidget(
+                podcast: podcast,
+                isExpanded: isExpanded,
+                isPlaying: isPlaying,
+                audioHandler: audioHandler,
+                mediaItem: mediaItem,
+                onPlayPause: () async {
+                  ref
+                      .read(audioPlayerNotifierProvider.notifier)
+                      .updatePodcast(podcast: podcast);
+
+                  if (!audioHandler.hasPodcasts()) {
+                    await syncPodcastsStateWithPlaylist(
+                        ref.read(podcastNotifierProvider));
+
+                    await playFrom(mediaItem);
+                  }
+
+                  if (!(isCurrentMediaItem)) {
+                    // log.f('1');
+                    if (!audioHandler.inQueue(mediaItem)) {
+                      await audioHandler.addToPlaylist(mediaItem);
+                    }
+
+                    await playFrom(mediaItem);
+                  } else if (isCurrentMediaItem) {
+                    if (audioHandler.player.playing) {
+                      audioHandler.pause();
+                    } else {
+                      if (await session.setActive(true)) {
+                        audioHandler.play();
+                      }
+                    }
+                  } else {
+                    // log.f('2');
+                    audioHandler.pause();
+                  }
+
+                  setState(() {
+                    // log.f('3');
+                  });
+                },
+                onPodcastTapped: () {
                   ref.read(audioPlayerNotifierProvider).audiobookPlayer.pause();
                   setState(() {
                     expanded =
                         index != currentIndex ? true : !(expanded ?? false);
                     currentIndex = index;
-                    // if (isPlaying) {
-                    //   log.i("RETURNING SINCE IS PLAYING");
-                    //   return;
-                    // }
-                    // loadPodcast(podcast);
                   });
                 },
-                child: Container(
-                  color: Colors.transparent,
-                  child: Column(
-                    spacing: 16.h,
-                    children: [
-                      Row(
-                        spacing: 32.w,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Text('data')
-                          PlayPauseWidget(
-                            isPlaying: isPlaying,
-                            onTap: () async {
-                              // log.f("Handle toggle playing: $isPlaying");
-
-                              // MyAudioService.instance.audioHandler //.play();
-                              // .playMediaItem(mediaItem);
-
-                              ref
-                                  .read(audioPlayerNotifierProvider.notifier)
-                                  .updatePodcast(podcast: podcast);
-
-                              if (!audioHandler.hasPodcasts()) {
-                                await syncPodcastsStateWithPlaylist(
-                                    ref.read(podcastNotifierProvider));
-
-                                await playFrom(mediaItem);
-                              }
-
-                              if (!(isCurrentMediaItem)) {
-                                // log.f('1');
-                                if (!audioHandler.inQueue(mediaItem)) {
-                                  await audioHandler.addToPlaylist(mediaItem);
-                                }
-
-                                await playFrom(mediaItem);
-                              } else if (isCurrentMediaItem) {
-                                if (audioHandler.player.playing) {
-                                  audioHandler.pause();
-                                } else {
-                                  if (await session.setActive(true)) {
-                                    audioHandler.play();
-                                  }
-                                }
-                              } else {
-                                // log.f('2');
-                                audioHandler.pause();
-                              }
-
-                              setState(() {
-                                // log.f('3');
-                              });
-                              // ref
-                              //     .read(audioPlayerNotifierProvider)
-                              //     .audiobookPlayer
-                              //     .pause();
-
-                              // final canLoadUrl =
-                              //     (player.audioSource as UriAudioSource?)
-                              //             ?.uri
-                              //             .toString() !=
-                              //         podcast.url;
-
-                              // log.i("CAN LOAD URL: $canLoadUrl");
-
-                              // audioHandler.p
-
-                              // return;
-
-                              // setState(() {
-                              //   currentIndex = index;
-                              //   if (isPlaying) {
-                              //     player.pause();
-                              //   } else if (canLoadUrl) {
-                              //     loadPodcast(podcast);
-                              //   } else {
-                              //     player.play();
-                              //   }
-                              // });
-                            },
-                          ),
-
-                          Expanded(
-                            child: Column(
-                              spacing: 32.h,
-                              children: [
-                                Row(
-                                  spacing: 24.w,
-                                  children: [
-                                    MyImageWidget(
-                                      image: podcast.coverphoto,
-                                      size: 64.r,
-                                      borderRadius: 8.r,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        podcast.title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                if (isExpanded)
-                                  Column(
-                                    spacing: 32.h,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        podcast.title,
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      AudioPlayerSlider(
-                                        player: audioHandler
-                                                    .currentMediaItem()
-                                                    ?.id ==
-                                                mediaItem.id
-                                            ? audioHandler.player
-                                            : null,
-                                        timerStyle: textTheme.labelLarge,
-                                        showStart: false,
-                                      ),
-                                      LabelledLists(
-                                        label: "Speaker(s)",
-                                        lists: podcast.speakers,
-                                      ),
-                                      LabelledLists(
-                                        label: "Genre",
-                                        lists: podcast.genre
-                                            .map((el) => el.describe.capitalize)
-                                            .toList(),
-                                      ),
-                                    ],
-                                  )
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(
-                            height: 64.h,
-                            child: Row(
-                              spacing: 10.w,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text("info"),
-                                Transform.rotate(
-                                  angle: isExpanded ? pi : 0,
-                                  child: AppSvgs.arrowDown.assetCopy(
-                                    width: 24.r,
-                                    height: 24.r,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(
-                        color: colorScheme.secondaryContainer,
-                      )
-                    ],
-                  ),
-                ).pSymmetric(horizontal: 0, vertical: 16.h),
               );
             },
             itemCount: podcastsState.podcasts.length,
@@ -385,32 +248,4 @@ class _PodcastsPageState extends ConsumerState<PodcastsPage>
   //     ..setAudioSource(AudioSource.uri(Uri.parse(podcast.url)))
   //     ..play();
   // }
-}
-
-class LabelledLists extends StatelessWidget with StatelessThemesMixin {
-  const LabelledLists({
-    super.key,
-    required this.label,
-    required this.lists,
-  });
-
-  final String label;
-  final List<String> lists;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      spacing: 16.h,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: colorScheme(context).outline,
-          ),
-        ),
-        Text("${lists.join(', ')}.")
-      ],
-    );
-  }
 }

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/data_layer/models/extras/audiobook_extra.dart';
 import 'package:wajanja/data_layer/models/user_model/user.dart';
-import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/presentation/widgets/my_image_widget.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
 import 'package:wajanja/utils/constants/enums.dart';

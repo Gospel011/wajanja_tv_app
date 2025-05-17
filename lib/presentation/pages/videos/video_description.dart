@@ -8,13 +8,11 @@ import 'package:wajanja/data_layer/providers/audio_player_provider/audio_player_
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
 import 'package:wajanja/main.dart';
-import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/my_video_player.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
 import 'package:wajanja/presentation/widgets/icon_container.dart';
 import 'package:wajanja/presentation/widgets/my_expandable_text.dart';
 import 'package:wajanja/utils/constants/app_svgs.dart';
-import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/string_extension.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';

@@ -10,12 +10,11 @@ import 'package:wajanja/data_layer/models/search/search.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/data_layer/providers/user_provider/user_provider.dart';
 import 'package:wajanja/data_layer/providers/videos_provider/videos_provider.dart';
-import 'package:wajanja/my_tests/sample_models.dart';
 import 'package:wajanja/presentation/components/video_row.dart';
+import 'package:wajanja/presentation/components/videos_grid.dart';
 import 'package:wajanja/presentation/widgets/my_loading_widget.dart';
 import 'package:wajanja/presentation/widgets/my_search_bar.dart';
 // import 'package:wajanja/my_tests/sample_video_model.dart';
-import 'package:wajanja/presentation/widgets/video_widget.dart';
 import 'package:wajanja/utils/constants/enums.dart';
 import 'package:wajanja/utils/extensions/widget_extensions.dart';
 import 'package:wajanja/utils/helpers/logger.dart';
@@ -170,26 +169,8 @@ class _HomePageState extends ConsumerState<HomePage>
               height: 32.h,
             )),
           if (videosState.videos.isNotEmpty)
-            SliverGrid.builder(
-              itemCount: videosState.videos.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 9 / 16,
-                  mainAxisSpacing: 10.r,
-                  crossAxisSpacing: 10.r),
-              itemBuilder: (context, index) {
-                final video = videosState.videos.elementAt(index);
-                return VideoWidget(
-                    video: video,
-                    onTap: () {
-                      log.i("GO TO DESCRIPTION FOR VIDEO: $video");
-
-                      context.pushNamed(
-                        AppRoutes.videoDescription.name,
-                        extra: video,
-                      );
-                    });
-              },
+            VideosGrid(
+              videos: videosState.videos,
             ).spSymmetric(horizontal: 16.w),
           SliverToBoxAdapter(
               child: SizedBox(

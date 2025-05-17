@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wajanja/data_layer/models/audiobook/audiobook.dart';
 import 'package:wajanja/data_layer/models/helper_models/error_model.dart';
-import 'package:wajanja/data_layer/models/videos/video.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_provider.dart';
 import 'package:wajanja/data_layer/providers/auth_provider/auth_state.dart';
 import 'package:wajanja/utils/constants/app_constants.dart';

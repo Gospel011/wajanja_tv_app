@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:wajanja/data_layer/models/search/search.dart';
 import 'package:wajanja/data_layer/providers/audiobooks_provider/audiobooks_provider.dart';
-import 'package:wajanja/my_tests/sample_audiobooks.dart';
 import 'package:wajanja/presentation/components/audiobooks_grid.dart';
 import 'package:wajanja/presentation/widgets/loading_states_widget.dart';
 import 'package:wajanja/presentation/widgets/my_search_bar.dart';

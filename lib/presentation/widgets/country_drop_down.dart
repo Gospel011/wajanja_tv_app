@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:wajanja/utils/constants/app_colors.dart';
 import 'package:wajanja/utils/mixins.dart';
 
 class CountryDropDown extends StatelessWidget with StatelessThemesMixin {
